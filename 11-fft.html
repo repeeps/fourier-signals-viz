@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>11 FFT · 푸리에·신호처리, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<style>
+  .twocol{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;}
+  .splitrow{display:flex; gap:6px; justify-content:center; margin:5px 0;}
+  .sb{font-family:'JetBrains Mono',monospace; font-size:12px; padding:5px 10px; border-radius:7px; background:var(--panel-2); border:1px solid var(--line); color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag">PART 3 · Chapter 11</div>
+    <h1>FFT — 같은 답을, 훨씬 빠르게</h1>
+    <p class="intro">DFT(10장)는 정확하지만 곧이곧대로 하면 <b>느려요</b>: 주파수마다 신호 전체를 훑어 곱하니 <b>N²</b>번 일하죠. <b>FFT(고속 푸리에 변환)</b>는 <b>분할정복</b>으로 이걸 <b>N·log N</b>으로 줄여요. 중요한 건 — FFT는 <b>다른 변환이 아니라 빠른 DFT</b>예요. <b>결과는 완전히 똑같고</b>, 속도만 빠르죠. 이 한 번의 속도 혁명이 디지털 신호처리 시대를 열었어요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · DFT는 느리다</button>
+    <button data-s="1">01 · 반으로 쪼개기</button>
+    <button data-s="2">02 · 속도 경주</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — DFT is Slow</span>
+    <h2>주파수마다 전체를 훑으면 N²</h2>
+    <p class="lead">N개의 표본으로 N개의 주파수를 구하는데, <b>주파수 하나마다 N번 곱셈</b>이 필요해요. 그래서 전부 하면 <b>N × N = N²</b>번. N이 커지면 폭발하죠. N을 키워보세요.</p>
+    <div class="ctrl"><label>표본 수 N</label><input type="range" id="n0" min="8" max="1024" value="256" step="8"><span class="val" id="n0v">256</span></div>
+    <div id="info0" class="callout q"></div>
+    <p class="note" style="margin-top:12px">→ 1초에 4만4천 번 표본을 뽑는 오디오(N≈44100)면 N²은 약 <b>19억 번</b>! 실시간 처리가 거의 불가능했어요. 그래서 더 빠른 방법이 절실했죠.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Split in Half</span>
+    <h2>짝수번째·홀수번째로 쪼개 재활용</h2>
+    <p class="lead">FFT의 비결: 크기 N짜리 DFT를 <b>짝수번째 표본의 DFT</b>와 <b>홀수번째 표본의 DFT</b>(각각 크기 N/2) <b>둘로 쪼개</b>고, 결과를 영리하게 합쳐요. 그 절반들을 또 쪼개고… <b>크기 1이 될 때까지</b>. 4장 분할정복과 똑같은 구조예요.</p>
+    <div id="splittree" style="margin-top:8px"></div>
+    <p class="note" style="margin-top:12px">→ 반으로 쪼개기를 반복하니 <b>log N 단계</b>, 각 단계의 일은 <b>약 N</b> → 전체 <b>N·log N</b>. 핵심은 쪼갠 절반들의 계산을 <b>재활용</b>해 중복을 없애는 거예요(겹치는 계산 제거 = 동적계획법과도 통하죠).</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — The Speed Race</span>
+    <h2>N² vs N·log N — 격차는 폭발한다</h2>
+    <p class="lead">곧이곧대로의 DFT(N²)와 FFT(N·log N)가 하는 일의 양을 견줘봐요. 작은 N에선 비슷해도, 큰 N에선 FFT가 <b>수백~수만 배</b> 빨라요.</p>
+    <div class="ctrl"><label>표본 수 N</label><input type="range" id="n2" min="16" max="65536" value="4096" step="16"><span class="val" id="n2v">4096</span></div>
+    <div id="bars2" class="callout v"></div>
+    <div class="callout good" style="margin-top:12px">
+      <p style="margin:0"><b>그런데 결과는?</b> 완전히 동일해요. 아래는 같은 신호에 DFT와 FFT를 돌린 스펙트럼 — 막대가 똑같죠. FFT는 마법의 다른 변환이 아니라 <b>DFT를 빨리 계산하는 지름길</b>일 뿐이에요.</p>
+    </div>
+    <div class="twocol" style="margin-top:8px">
+      <div><div style="font-size:12px;color:var(--faint);font-family:'JetBrains Mono',monospace">느린 DFT 결과</div><div id="specD"></div></div>
+      <div><div style="font-size:12px;color:var(--faint);font-family:'JetBrains Mono',monospace">빠른 FFT 결과</div><div id="specF"></div></div>
+    </div>
+    <p class="note" style="margin-top:12px">→ "FFT는 빠른 DFT, 답은 같다" — 이 한 줄만 기억하면 돼요.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Recap</span>
+    <h2>FFT</h2>
+    <div class="twocol">
+      <div class="callout q"><div class="ttl">빠른 DFT</div><p style="margin:0">분할정복(짝수/홀수 쪼개 재활용)으로 N²→N·log N. 결과는 DFT와 100% 동일.</p></div>
+      <div class="callout v"><div class="ttl">시대를 연 속도</div><p style="margin:0">실시간 오디오·통신·영상 처리가 FFT 덕에 가능해졌다. 마법 아닌 지름길.</p></div>
+    </div>
+    <div class="callout good" style="margin-top:14px">
+      <p style="margin:0">이제 신호를 빠르게 주파수로 분해할 수 있어요. 하지만 컴퓨터는 연속 신호가 아니라 <b>띄엄띄엄 찍은 표본</b>으로 일하죠. 다음 PART 4에서 그 표본화의 함정 — <b>에일리어싱</b>(빨리 도는 바퀴가 거꾸로 보이는 착시)을 봅니다.</p>
+    </div>
+    <p class="note" style="margin-top:16px">→ <a href="12-sampling.html" style="color:var(--q);font-weight:700">CH 12 · 샘플링·에일리어싱</a> · <a href="index.html">목차</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · 모든 변환·비교는 브라우저에서 실시간 계산 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script>
+VZ.mountTopnav('#topnav', 'CH 11 · FFT');
+VZ.setupStepper();
+const FT = VZ.FT, TAU = FT.TAU;
+
+// Step 0
+(function(){ function r(N){ const ops=N*N;
+  document.getElementById('info0').innerHTML=`<div class="ttl" style="color:var(--q)">N = ${N} · 곧이곧대로 DFT ≈ ${ops.toLocaleString()}번 곱셈</div><p style="margin:0">${N}개 주파수 × 각 ${N}번 = ${ops.toLocaleString()}. N이 2배면 일은 <b>4배</b>로 뛰어요(2장의 제곱 성장).</p>`; }
+  document.getElementById('n0').oninput=e=>{ const N=+e.target.value; document.getElementById('n0v').textContent=N; r(N); }; r(256);
+})();
+
+// Step 1 split tree
+(function(){ const levels=[[8],[4,4],[2,2,2,2],[1,1,1,1,1,1,1,1]];
+  document.getElementById('splittree').innerHTML = levels.map((lv,i)=>
+    `<div class="splitrow">`+lv.map(s=>`<span class="sb">크기 ${s}</span>`).join('')+`</div>`+(i<levels.length-1?'<div style="text-align:center;color:var(--faint)">▾ 짝수/홀수로 쪼갬</div>':'')).join('')
+    + `<div style="text-align:center;color:var(--good);font-family:JetBrains Mono;font-size:12px;margin-top:6px">단계 수 = log₂8 = 3 · 각 단계 일 ≈ N → 전체 N·log N</div>`;
+})();
+
+// Step 2 race + same-result
+(function(){
+  function r(N){ const slow=N*N, fast=Math.round(N*Math.log2(N)); const maxv=slow;
+    document.getElementById('bars2').innerHTML=`<div class="ttl" style="color:var(--v)">N = ${N} · 연산량(대략)</div>`+
+      VZ.barRow('느린 DFT ≈ N²', slow/maxv, {color:'var(--k)', pctText: slow.toLocaleString()})+
+      VZ.barRow('FFT ≈ N·log N', fast/maxv, {color:'var(--good)', pctText: fast.toLocaleString()})+
+      `<p style="margin:8px 0 0">FFT가 약 <b>${Math.round(slow/fast).toLocaleString()}배</b> 적게 일해요.</p>`;
+  }
+  document.getElementById('n2').oninput=e=>{ const N=+e.target.value; document.getElementById('n2v').textContent=N; r(N); }; r(4096);
+  // 같은 결과 확인: N=16 신호의 DFT vs FFT 진폭 스펙트럼
+  const N=16, sig=[]; for(let n=0;n<N;n++) sig.push(Math.cos(TAU*2*n/N)+0.6*Math.cos(TAU*5*n/N));
+  const D=FT.dft(sig); const F=FT.fft(sig, new Array(N).fill(0));
+  const binsD=[], binsF=[]; for(let k=0;k<=N/2;k++){ binsD.push({freq:k, amp:D[k].amp}); binsF.push({freq:k, amp:Math.hypot(F.re[k],F.im[k])/N}); }
+  document.getElementById('specD').innerHTML=FT.spectrum(binsD,{W:320,H:150,colorFn:()=>'var(--k)'});
+  document.getElementById('specF').innerHTML=FT.spectrum(binsF,{W:320,H:150,colorFn:()=>'var(--good)'});
+})();
+</script>
+</body>
+</html>

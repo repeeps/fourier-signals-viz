@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10 DFT · 푸리에·신호처리, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<style>.twocol{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;} .row2{display:grid;grid-template-columns:300px 1fr;gap:14px;align-items:center;} @media(max-width:600px){.row2{grid-template-columns:1fr;}}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag">PART 3 · Chapter 10</div>
+    <h1>DFT — 어떤 주파수가 들어있나 "감아서" 재기</h1>
+    <p class="intro">컴퓨터는 신호를 어떻게 주파수로 분해할까요? 아름다운 방법이 있어요: 신호를 어떤 <b>시험 주파수</b>로 <b>원에 감아요(winding)</b>. 시험 주파수가 신호 속 진짜 주파수와 <b>맞아떨어지면</b>, 감긴 모양의 <b>무게중심이 중심에서 확 쏠려요</b>. 모든 주파수에 대해 이 쏠림을 재면 — 그게 바로 스펙트럼이에요. 이게 <b>이산 푸리에 변환(DFT)</b>의 직관이에요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 무엇이 들었나</button>
+    <button data-s="1">01 · 원에 감기</button>
+    <button data-s="2">02 · 모든 주파수 훑기</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — What's Inside?</span>
+    <h2>이 신호에 어떤 주파수가 숨어 있을까</h2>
+    <p class="lead">아래 신호는 몇 개의 사인파를 더한 거예요(3배·5배가 섞여 있어요). 파형만 봐선 어떤 주파수가 들었는지 알기 어렵죠. DFT는 이걸 <b>주파수 하나씩 시험</b>해 알아내요.</p>
+    <div class="chart-wrap" id="chart0" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 핵심 아이디어: "혹시 주파수 f가 들어있나?"를 묻는 방법 — 신호를 <b>f의 속도로 원에 감아</b> 보는 거예요(다음 단계). f가 맞으면 감긴 모양이 한쪽으로 쏠려요.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Wind It Around</span>
+    <h2>시험 주파수로 감으면, 맞을 때 쏠린다</h2>
+    <p class="lead">시험 주파수를 바꿔 신호를 원에 감아 보세요(왼쪽). <b>주황 점 = 감긴 모양의 무게중심</b>이에요. 대부분의 주파수에선 모양이 골고루 퍼져 무게중심이 <b>중심 근처(쏠림 없음)</b>. 하지만 신호 속 진짜 주파수(3·5)에 맞추면 무게중심이 <b>확 쏠려요</b>!</p>
+    <div class="ctrl"><label>시험 주파수</label><input type="range" id="f1" min="5" max="70" value="20"><span class="val" id="f1v">2.0</span></div>
+    <div class="row2"><div class="chart-wrap" id="wind1"></div><div id="info1" class="callout q"></div></div>
+    <p class="note" style="margin-top:12px">→ 무게중심이 멀수록 그 주파수가 많이 들어있다는 뜻. 시험 주파수를 3, 5에 맞춰 쏠림이 커지는 걸 확인하세요. 이 "쏠림의 크기"가 곧 그 주파수의 <b>진폭</b>이에요.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Sweep All Frequencies</span>
+    <h2>모든 주파수에서 쏠림을 재면 = 스펙트럼</h2>
+    <p class="lead">시험 주파수를 0부터 쭉 훑으며 매번 무게중심의 쏠림(크기)을 기록하면, 아래 곡선이 나와요. 신호 속 진짜 주파수(<b>3·5</b>)에서 <b>뾰족한 봉우리</b>가 솟죠 — 이게 바로 <b>스펙트럼</b>이고, DFT의 결과예요.</p>
+    <div class="chart-wrap" id="chart2" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ "신호를 각 주파수로 감아 무게중심 재기"를 모든 주파수에 대해 한 게 DFT예요. 컴퓨터는 이걸 표본점들로 정확히 계산하죠. 봉우리 위치=어떤 주파수, 높이=얼마나. 파형이 막대(스펙트럼)로 변신 완료!</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Recap</span>
+    <h2>DFT</h2>
+    <div class="twocol">
+      <div class="callout q"><div class="ttl">감아서 재기</div><p style="margin:0">신호를 시험 주파수로 원에 감아 무게중심을 본다. 맞으면 쏠림(큰 무게중심)=그 주파수의 양.</p></div>
+      <div class="callout v"><div class="ttl">모든 f → 스펙트럼</div><p style="margin:0">모든 주파수에서 쏠림을 재면 스펙트럼. 봉우리=들어있는 주파수. 위상도 무게중심 방향에 담겨.</p></div>
+    </div>
+    <div class="callout good" style="margin-top:14px">
+      <p style="margin:0">무게중심은 사실 신호와 회전 화살표를 곱해 평균낸 것 — 15장에서 이게 "<b>사영(내적)</b>"임을 봐요. 한편 DFT를 곧이곧대로 하면 느려요(주파수마다 전부 계산). 다음 <b>11장 FFT</b>가 같은 결과를 <b>훨씬 빠르게</b> 내는 지름길을 보여줍니다.</p>
+    </div>
+    <p class="note" style="margin-top:16px">→ <a href="11-fft.html" style="color:var(--q);font-weight:700">CH 11 · FFT</a> · <a href="index.html">목차</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · 모든 감기·변환은 브라우저에서 실시간 계산 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script>
+VZ.mountTopnav('#topnav', 'CH 10 · DFT');
+VZ.setupStepper();
+const FT = VZ.FT, TAU = FT.TAU;
+const W = 4;                       // 감을 구간(기본 주기 4개)
+const g = t => Math.cos(TAU*3*t) + 0.7*Math.cos(TAU*5*t);
+
+// Step 0 : 신호 파형
+(function(){ const bd=FT.board({W:560,H:200,xmin:0,xmax:W,ymin:-1.9,ymax:1.9});
+  document.getElementById('chart0').innerHTML=`<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block"><line x1="${bd.X(0)}" y1="${bd.Y(0)}" x2="${bd.X(W)}" y2="${bd.Y(0)}" stroke="rgba(255,255,255,.15)"/>${FT.waveStrip(bd,g,{color:'var(--hot)',n:600})}</svg>`;
+})();
+
+function com(f){ const M=400; let sr=0,si=0; for(let i=0;i<M;i++){ const t=W*i/M, r=g(t), a=-TAU*f*t; sr+=r*Math.cos(a); si+=r*Math.sin(a); } return {re:sr/M, im:si/M}; }
+
+// Step 1 : 감기
+(function(){ let f=2;
+  const cb=FT.cboard({W:300,H:300,pad:20,range:1.9});
+  function r(){ const M=500; let d='';
+    for(let i=0;i<=M;i++){ const t=W*i/M, rad=g(t), a=-TAU*f*t; const re=rad*Math.cos(a), im=rad*Math.sin(a); d+=(i?'L':'M')+cb.X(re).toFixed(1)+','+cb.Y(im).toFixed(1)+' '; }
+    const c=com(f); const mag=Math.hypot(c.re,c.im);
+    let s=FT.cgrid(cb,{rings:[1]});
+    s+=`<path d="${d.trim()}" fill="none" stroke="var(--q)" stroke-width="1.3" opacity="0.8"/>`;
+    s+=`<circle cx="${cb.X(c.re).toFixed(1)}" cy="${cb.Y(c.im).toFixed(1)}" r="6" fill="var(--hot)" stroke="#000" stroke-width="1.3"/>`;
+    document.getElementById('wind1').innerHTML=`<svg width="300" height="300" viewBox="0 0 300 300" style="max-width:100%;display:block">${s}</svg>`;
+    const near = Math.abs(f-3)<0.15||Math.abs(f-5)<0.15;
+    document.getElementById('info1').innerHTML=`<div class="ttl" style="color:${near?'var(--good)':'var(--q)'}">시험 주파수 ${f.toFixed(1)} · 쏠림 ${mag.toFixed(2)}</div><p style="margin:0">${near?'<b style="color:var(--good)">맞았다! 무게중심이 확 쏠렸어요 — 이 주파수가 들어있어요.</b>':'무게중심이 중심 근처 — 이 주파수는 거의 없어요. 3이나 5로 맞춰보세요.'}</p>`;
+  }
+  document.getElementById('f1').oninput=e=>{ f=+e.target.value/10; document.getElementById('f1v').textContent=f.toFixed(1); r(); }; r();
+})();
+
+// Step 2 : 스펙트럼 (sweep)
+(function(){ const bd=FT.board({W:560,H:240,xmin:0,xmax:7,ymin:0,ymax:0.65,padB:28});
+  let d=''; const M=280; for(let i=0;i<=M;i++){ const f=7*i/M; const c=com(f); const mag=Math.hypot(c.re,c.im); d+=(i?'L':'M')+bd.X(f).toFixed(1)+','+bd.Y(mag).toFixed(1)+' '; }
+  let s=`<line x1="${bd.X(0)}" y1="${bd.Y(0)}" x2="${bd.X(7)}" y2="${bd.Y(0)}" stroke="rgba(255,255,255,.2)"/>`;
+  [3,5].forEach(pk=>{ s+=`<line x1="${bd.X(pk)}" y1="${bd.padT}" x2="${bd.X(pk)}" y2="${bd.Y(0)}" stroke="var(--faint)" stroke-dasharray="3 3"/><text x="${bd.X(pk)}" y="${bd.H-8}" text-anchor="middle" font-size="11" fill="var(--faint)" font-family="JetBrains Mono">${pk}</text>`; });
+  s+=`<path d="${d.trim()}" fill="none" stroke="var(--pink)" stroke-width="2.5"/>`;
+  document.getElementById('chart2').innerHTML=`<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block">${s}</svg>`;
+})();
+</script>
+</body>
+</html>

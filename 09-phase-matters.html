@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>09 위상은 왜 중요한가 · 푸리에·신호처리, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<style>.twocol{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;} .panellab{font-size:12px;color:var(--faint);font-family:'JetBrains Mono',monospace;margin:6px 0 2px;}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag">PART 3 · Chapter 09</div>
+    <h1>위상은 왜 중요한가 — 진폭만으론 반쪽</h1>
+    <p class="intro">스펙트럼이라 하면 보통 <b>진폭 막대</b>(어떤 주파수가 얼마나 세게)만 떠올려요. 하지만 그건 신호의 <b>절반</b>일 뿐이에요. <b>위상</b>(각 주파수의 출발 타이밍)도 똑같이 중요하죠 — <b>진폭이 완전히 같아도 위상이 다르면 파형은 전혀 다른 모양</b>이 돼요. 직접 확인해 봅니다.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 같은 진폭, 다른 모양</button>
+    <button data-s="1">01 · 위상만 돌리기</button>
+    <button data-s="2">02 · 반쪽 정보</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — Same Amps, Different Shape</span>
+    <h2>진폭 막대는 똑같은데 파형이 다르다</h2>
+    <p class="lead">두 신호 모두 1·3배 하모닉을 <b>같은 크기</b>로 가져요(아래 진폭 막대 동일). 그런데 3배 하모닉의 <b>위상만</b> 다르게 했더니 — 위 두 파형은 <b>완전히 다른 모양</b>이에요.</p>
+    <div class="panellab">신호 A (위상 0)</div><div class="chart-wrap" id="wA"></div>
+    <div class="panellab">신호 B (3배 하모닉만 180° 밀림)</div><div class="chart-wrap" id="wB"></div>
+    <div class="panellab">진폭 스펙트럼 (둘 다 동일!)</div><div class="chart-wrap" id="sAB"></div>
+    <p class="note" style="margin-top:12px">→ 진폭 막대만 보면 A와 B가 구별이 안 돼요. 하지만 실제 파형(=실제 소리·모양)은 다르죠. 즉 <b>진폭만으론 신호를 결정 못 해요</b>.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Turn Only the Phase</span>
+    <h2>위상을 돌리면 파형이 춤춘다 (막대는 그대로)</h2>
+    <p class="lead">3배 하모닉의 <b>위상</b>만 슬라이더로 돌려보세요. 위 파형은 계속 변하는데, 아래 <b>진폭 막대는 미동도 없어요</b>. 위상은 진폭 막대에 안 나타나는 <b>숨은 정보</b>예요.</p>
+    <div class="ctrl"><label>3배 하모닉 위상</label><input type="range" id="ph1" min="0" max="360" value="0"><span class="val" id="ph1v">0°</span></div>
+    <div class="panellab">파형 (위상 따라 변함)</div><div class="chart-wrap" id="w1"></div>
+    <div class="panellab">진폭 스펙트럼 (변하지 않음)</div><div class="chart-wrap" id="s1"></div>
+    <p class="note" style="margin-top:12px">→ 그래서 신호를 완전히 적으려면 <b>진폭 + 위상</b> 둘 다 필요해요. 위상자(회전 화살표)는 둘을 한 번에 담죠 — 길이=진폭, 출발각=위상(3장).</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Half the Story</span>
+    <h2>이미지로 보면 — 위상이 "무엇이 어디에"</h2>
+    <p class="lead">사진을 푸리에로 분해하면 진폭과 위상이 나와요. 흥미롭게도 <b>위상</b>이 "윤곽·구조(무엇이 어디 있나)"의 대부분을 담고, 진폭만으론 형체를 거의 알 수 없어요. 위상이 진폭만큼, 때론 더 중요하다는 유명한 사실이에요.</p>
+    <div class="twocol">
+      <div class="colbox" style="background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:16px"><div class="ttl" style="color:var(--q)">진폭만 알면</div><p style="margin:0;font-size:13.5px;color:var(--muted)">"어떤 주파수가 얼마나 세게"는 알아도, 그것들이 <b>어떻게 정렬됐는지</b> 몰라 형체가 뭉개져요.</p></div>
+      <div class="colbox" style="background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:16px"><div class="ttl" style="color:var(--pink)">위상까지 알면</div><p style="margin:0;font-size:13.5px;color:var(--muted)">각 주파수의 <b>타이밍(정렬)</b>이 정해져, 윤곽·구조가 살아나 원본이 복원돼요.</p></div>
+    </div>
+    <p class="note" style="margin-top:12px">→ 많은 입문용 그림이 진폭 스펙트럼만 보여줘서 "스펙트럼=진폭"이라 오해하기 쉬워요. 하지만 <b>완전한 푸리에 = 진폭 + 위상</b>. 위상자 하나가 그 둘을 함께 담는 이유죠.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Recap</span>
+    <h2>위상의 무게</h2>
+    <div class="twocol">
+      <div class="callout q"><div class="ttl">진폭은 반쪽</div><p style="margin:0">같은 진폭이라도 위상이 다르면 다른 신호. 진폭 막대만으론 복원 불가.</p></div>
+      <div class="callout v"><div class="ttl">완전한 정보</div><p style="margin:0">신호 = 각 주파수의 진폭 + 위상. 위상자(회전 화살표)가 둘을 한 번에 담는다.</p></div>
+    </div>
+    <div class="callout good" style="margin-top:14px">
+      <p style="margin:0">이제 "스펙트럼은 진폭과 위상 둘 다"임을 알았어요. 그럼 컴퓨터는 이 진폭·위상을 어떻게 계산할까요? 다음 <b>10장 DFT</b>가 그 방법 — 신호를 각 주파수로 "감아서" 무게중심으로 성분을 재는 아름다운 방법을 봅니다.</p>
+    </div>
+    <p class="note" style="margin-top:16px">→ <a href="10-dft.html" style="color:var(--q);font-weight:700">CH 10 · DFT</a> · <a href="index.html">목차</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · 모든 파형·스펙트럼은 브라우저에서 실시간 계산 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script>
+VZ.mountTopnav('#topnav', 'CH 09 · 위상');
+VZ.setupStepper();
+const FT = VZ.FT, TAU = FT.TAU;
+function wave(elId, terms){ const bd=FT.board({W:560,H:150,xmin:0,xmax:1,ymin:-1.8,ymax:1.8});
+  const f=FT.additive(terms);
+  document.getElementById(elId).innerHTML=`<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block"><line x1="${bd.X(0)}" y1="${bd.Y(0)}" x2="${bd.X(1)}" y2="${bd.Y(0)}" stroke="rgba(255,255,255,.15)"/>${FT.waveStrip(bd,f,{color:'var(--hot)',n:400})}</svg>`; }
+function spec(elId, ampsByFreq){ const bins=Object.keys(ampsByFreq).map(k=>({freq:+k,amp:ampsByFreq[k]})); document.getElementById(elId).innerHTML=FT.spectrum(bins,{W:560,H:140,colorFn:()=>'var(--pink)'}); }
+
+// Step 0
+(function(){ wave('wA',[{amp:1,freq:1,phase:0},{amp:0.7,freq:3,phase:0}]);
+  wave('wB',[{amp:1,freq:1,phase:0},{amp:0.7,freq:3,phase:Math.PI}]);
+  spec('sAB',{1:1,3:0.7}); })();
+
+// Step 1
+(function(){ let ph=0;
+  function r(){ wave('w1',[{amp:1,freq:1,phase:0},{amp:0.7,freq:3,phase:ph}]); spec('s1',{1:1,3:0.7}); }
+  document.getElementById('ph1').oninput=e=>{ const d=+e.target.value; ph=d*Math.PI/180; document.getElementById('ph1v').textContent=d+'°'; r(); }; r();
+})();
+</script>
+</body>
+</html>

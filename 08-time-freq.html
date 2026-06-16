@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>08 시간 ↔ 주파수 · 푸리에·신호처리, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<style>
+  .twocol{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;}
+  .hsliders{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:8px 14px; margin:8px 0;}
+  .hsliders .ctrl{margin:0;} .hsliders label{min-width:46px;}
+  .panellab{font-size:12px; color:var(--faint); font-family:'JetBrains Mono',monospace; margin:6px 0 2px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag">PART 3 · Chapter 08</div>
+    <h1>시간 ↔ 주파수 — 같은 신호, 두 얼굴</h1>
+    <p class="intro">같은 노래를 <b>녹음 파형</b>(시간축)으로도, <b>악보</b>(어떤 음이 얼마나)로도 적을 수 있죠. 신호도 똑같아요: <b>시간영역</b>(파형)과 <b>주파수영역</b>(스펙트럼 막대)은 <b>같은 정보의 두 표현</b>이에요. 어느 쪽으로도 서로를 완벽히 복원할 수 있어요. 둘을 나란히 놓고 함께 움직여 봅니다.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 두 얼굴</button>
+    <button data-s="1">01 · 막대 ↔ 파형</button>
+    <button data-s="2">02 · 가로축의 정체</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — Two Faces</span>
+    <h2>파형과 스펙트럼은 한 신호의 두 모습</h2>
+    <p class="lead">위는 <b>시간영역</b> — 시간에 따라 출렁이는 파형. 아래는 <b>주파수영역</b> — 어떤 주파수가 얼마나 들어있는지 막대로. 이 신호는 1·3·5배 하모닉으로 이뤄져, 막대 세 개로 정확히 요약돼요.</p>
+    <div class="panellab">시간영역 (파형)</div><div class="chart-wrap" id="w0"></div>
+    <div class="panellab">주파수영역 (스펙트럼)</div><div class="chart-wrap" id="s0"></div>
+    <p class="note" style="margin-top:12px">→ 파형은 "언제 어떤 값"을, 스펙트럼은 "어떤 주파수가 얼마나"를 말해요. 복잡한 파형도 막대 몇 개로 깔끔히 요약되니, 분석·압축엔 주파수영역이 훨씬 편해요.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Bars ↔ Wave</span>
+    <h2>막대를 바꾸면 파형이 즉시 바뀐다</h2>
+    <p class="lead">주파수 막대(하모닉 크기)를 슬라이더로 조절하면 위 파형이 <b>실시간</b>으로 따라 변해요. 둘은 한 몸이거든요. <b>한 막대만 키우면 파형이 어떻게 변할지</b> 예측하고 움직여보세요.</p>
+    <div class="hsliders" id="hsliders"></div>
+    <div class="panellab">시간영역 (파형)</div><div class="chart-wrap" id="w1"></div>
+    <div class="panellab">주파수영역 (스펙트럼)</div><div class="chart-wrap" id="s1"></div>
+    <p class="note" style="margin-top:12px">→ 막대 하나 = 사인파 하나. 막대를 키우면 그 주파수의 출렁임이 파형에 더 크게 섞여요. 시간↔주파수는 이렇게 양방향으로 완벽히 연결돼 있어요.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — What the Axis Means</span>
+    <h2>주파수영역의 가로축엔 "시간"이 없다</h2>
+    <p class="lead">처음 배울 때 가장 헷갈리는 점이에요. <b>파형의 가로축은 시간</b>(초)이지만, <b>스펙트럼의 가로축은 주파수</b>(1초당 횟수)예요. 스펙트럼엔 시계가 없어요 — "이 음이 <b>언제</b> 났나"가 아니라 "이 음이 <b>얼마나</b> 들어있나"만 말하죠.</p>
+    <div class="panellab" style="color:var(--q)">시간영역 — 가로축 = 시간(초) ⏱️</div><div class="chart-wrap" id="w2"></div>
+    <div class="panellab" style="color:var(--pink)">주파수영역 — 가로축 = 주파수(횟수/초) 🎵 (시계 없음!)</div><div class="chart-wrap" id="s2"></div>
+    <p class="note" style="margin-top:12px">→ 비유: 악보는 "도·미·솔이 들어간다"를 말하지, 그 자체로 시간 흐름을 가로축에 두진 않죠(음표 위치가 시간이긴 하지만 스펙트럼은 그 시간조차 뭉뚱그려요). "언제"까지 보려면 14장 <b>스펙트로그램</b>이 필요해요.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Recap</span>
+    <h2>두 영역</h2>
+    <div class="twocol">
+      <div class="callout q"><div class="ttl">같은 정보</div><p style="margin:0">파형(시간)과 스펙트럼(주파수)은 한 신호의 두 표현. 서로 완벽 복원 가능.</p></div>
+      <div class="callout v"><div class="ttl">가로축 주의</div><p style="margin:0">시간영역 가로축=시간, 주파수영역 가로축=주파수. 스펙트럼엔 "언제"가 없다.</p></div>
+    </div>
+    <div class="callout good" style="margin-top:14px">
+      <p style="margin:0">그런데 스펙트럼 막대(진폭)만으로 신호가 다 결정될까요? 아니에요 — <b>위상</b>도 필요해요. 다음 <b>09장</b>에서 "진폭이 같아도 위상이 다르면 완전히 다른 신호"임을 보고, <b>10장</b>에서 컴퓨터가 이 분해(스펙트럼)를 실제로 계산하는 <b>DFT</b>를 봅니다.</p>
+    </div>
+    <p class="note" style="margin-top:16px">→ <a href="09-phase-matters.html" style="color:var(--q);font-weight:700">CH 09 · 위상은 왜 중요한가</a> · <a href="index.html">목차</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · 모든 파형·스펙트럼은 브라우저에서 실시간 계산 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script>
+VZ.mountTopnav('#topnav', 'CH 08 · 시간↔주파수');
+VZ.setupStepper();
+const FT = VZ.FT, TAU = FT.TAU;
+function wave(elId, terms){ const bd=FT.board({W:560,H:170,xmin:0,xmax:1,ymin:-1.3,ymax:1.3}); const f=FT.additive(terms);
+  let mx=0; for(let x=0;x<=1;x+=0.004)mx=Math.max(mx,Math.abs(f(x))); mx=mx||1;
+  document.getElementById(elId).innerHTML=`<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block"><line x1="${bd.X(0)}" y1="${bd.Y(0)}" x2="${bd.X(1)}" y2="${bd.Y(0)}" stroke="rgba(255,255,255,.15)"/>${FT.waveStrip(bd,x=>f(x)/mx,{color:'var(--hot)',n:400})}</svg>`; }
+function spec(elId, terms, maxFreq){ const bins=[]; for(let k=1;k<=maxFreq;k++){ const t=terms.find(t=>t.freq===k); bins.push({freq:k, amp:t?t.amp:0}); }
+  document.getElementById(elId).innerHTML=FT.spectrum(bins,{W:560,H:160, colorFn:()=>'var(--pink)'}); }
+
+// Step 0
+(function(){ const terms=[{amp:1,freq:1,phase:0},{amp:0.5,freq:3,phase:0},{amp:0.3,freq:5,phase:0}];
+  wave('w0',terms); spec('s0',terms,6); })();
+
+// Step 1 막대↔파형
+(function(){ const N=5; let amps=[1,0,0.6,0,0.35];
+  const wrap=document.getElementById('hsliders');
+  wrap.innerHTML=amps.map((a,i)=>`<div class="ctrl"><label>${i+1}배</label><input type="range" data-k="${i}" min="0" max="100" value="${a*100}"><span class="val" id="hv${i}">${a.toFixed(2)}</span></div>`).join('');
+  function terms(){ return amps.map((a,i)=>({amp:a,freq:i+1,phase:0})).filter(t=>t.amp>0.001); }
+  function r(){ const t=terms(); wave('w1', t.length?t:[{amp:0.001,freq:1,phase:0}]); spec('s1', amps.map((a,i)=>({amp:a,freq:i+1,phase:0})), 5); }
+  wrap.addEventListener('input',e=>{ const k=+e.target.dataset.k; amps[k]=+e.target.value/100; document.getElementById('hv'+k).textContent=amps[k].toFixed(2); r(); });
+  r();
+})();
+
+// Step 2 (정적, 라벨 강조)
+(function(){ const terms=[{amp:1,freq:2,phase:0},{amp:0.6,freq:5,phase:0}];
+  wave('w2',terms); spec('s2',terms,6); })();
+</script>
+</body>
+</html>
