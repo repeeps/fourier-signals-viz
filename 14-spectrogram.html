@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>14 스펙트로그램 · 푸리에·신호처리, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<style>.twocol{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;} .seg{display:inline-flex;gap:4px;margin:4px 0;flex-wrap:wrap;} .seg .btn{padding:8px 12px;} .seg .btn.on{background:var(--hot);color:#1a1206;border-color:var(--hot);} .panellab{font-size:12px;color:var(--faint);font-family:'JetBrains Mono',monospace;margin:6px 0 2px;}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag">PART 4 · Chapter 14</div>
+    <h1>스펙트로그램 — 시간 따라 변하는 주파수</h1>
+    <p class="intro">지금까지 스펙트럼은 "이 신호에 어떤 주파수가 들어있나"를 <b>전체에 대해 한 번에</b> 말했어요. 그런데 노래·말소리는 <b>시간에 따라 음이 변하죠</b>. <b>스펙트로그램</b>은 신호를 짧은 조각으로 잘라 각 순간의 스펙트럼을 구한 뒤 <b>가로=시간, 세로=주파수, 색=세기</b>로 펼친 그림이에요. 휘파람의 음이 오르내리는 게 그대로 보여요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 변하는 음</button>
+    <button data-s="1">01 · 시간×주파수 그림</button>
+    <button data-s="2">02 · 패턴 읽기</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — A Changing Pitch</span>
+    <h2>음이 점점 높아지는 소리(처프)</h2>
+    <p class="lead">아래 파형은 <b>음이 점점 높아지는</b> 신호예요(사이렌이 올라가듯). 시간이 갈수록 물결이 <b>촘촘해지는</b> 게 보이죠 — 주파수가 오르는 거예요. 하지만 파형만으론 "지금 음이 정확히 얼마"인지 읽기 어려워요.</p>
+    <div class="chart-wrap" id="chart0" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 전체를 한 번에 푸리에하면 "여러 주파수가 골고루 있다"고만 나와요 — <b>언제 어떤 음이었는지</b>는 사라지죠(8장: 스펙트럼엔 시간이 없다). 그 "언제"를 살리려면 짧게 잘라 봐야 해요.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Time × Frequency</span>
+    <h2>짧게 잘라 스펙트럼을 시간순으로 늘어놓기</h2>
+    <p class="lead">신호를 짧은 조각으로 잘라 각 조각의 스펙트럼을 구하고, 왼→오로 늘어놓아요. <b>가로=시간, 세로=주파수, 밝을수록 그 순간 그 음이 강함</b>. 음이 오르는 처프는 <b>밝은 띠가 위로 올라가는</b> 사선으로 나타나요.</p>
+    <div class="panellab">스펙트로그램 (밝을수록 강함 · 세로 위=고음)</div>
+    <div class="chart-wrap" id="spec1" style="margin-top:4px"></div>
+    <p class="note" style="margin-top:12px">→ 파형에선 못 읽던 "언제 어떤 음"이 한눈에 보여요. 음성인식 AI가 목소리를 이 그림으로 바꿔 알아듣고, 음악 앱이 곡을 인식하는 것도 이 스펙트로그램이에요.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Reading Patterns</span>
+    <h2>소리마다 다른 그림</h2>
+    <p class="lead">신호 종류를 바꿔 스펙트로그램 모양을 비교하세요. <b>일정한 음</b>=수평 띠, <b>처프</b>=올라가는 사선, <b>두 음</b>=평행한 두 띠, <b>오르내림(휘파람)</b>=물결치는 띠.</p>
+    <div class="seg" id="seg">
+      <button class="btn on" data-k="chirp">처프(상승)</button>
+      <button class="btn" data-k="tone">일정한 음</button>
+      <button class="btn" data-k="two">두 음</button>
+      <button class="btn" data-k="whistle">휘파람</button>
+    </div>
+    <div class="chart-wrap" id="spec2" style="margin-top:4px"></div>
+    <p class="note" style="margin-top:12px">→ 스펙트로그램은 "소리의 지문"이에요 — 새소리·악기·음소가 저마다 고유한 무늬를 남기죠. 시간과 주파수를 한 그림에 담아, 둘 다 놓치지 않는 게 핵심이에요.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Recap</span>
+    <h2>스펙트로그램</h2>
+    <div class="twocol">
+      <div class="callout q"><div class="ttl">짧게 잘라 본 스펙트럼</div><p style="margin:0">신호를 조각내 각 순간의 주파수를 구해 시간순 나열. 가로=시간, 세로=주파수, 색=세기.</p></div>
+      <div class="callout v"><div class="ttl">시간 + 주파수</div><p style="margin:0">"언제 어떤 음"을 함께 봄. 음성인식·음악인식·새소리 분석의 기본 표현.</p></div>
+    </div>
+    <div class="callout good" style="margin-top:14px">
+      <p style="margin:0">이로써 현실 신호(PART 4)를 마쳐요 — 표본화의 함정, 필터링, 그리고 시간 따라 변하는 주파수까지. 마지막 PART 5에선 한 발 물러서서, 지금까지의 모든 것이 사실 <b>선형대수</b>(사영·직교·기저)였음을 봅니다 — 푸리에가 선대의 가장 아름다운 사례인 이유죠.</p>
+    </div>
+    <p class="note" style="margin-top:16px">→ <a href="15-projection.html" style="color:var(--q);font-weight:700">CH 15 · 사영 = 계수</a> · <a href="index.html">목차</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · 모든 스펙트로그램은 브라우저에서 실시간 계산 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script>
+VZ.mountTopnav('#topnav', 'CH 14 · 스펙트로그램');
+VZ.setupStepper();
+const FT = VZ.FT, TAU = FT.TAU;
+
+// 신호들 (instantaneous phase)
+const SIGS = {
+  chirp:   t => Math.sin(TAU*(4*t + 9*t*t)),          // 주파수 4→22 상승
+  tone:    t => Math.sin(TAU*10*t),
+  two:     t => Math.sin(TAU*6*t) + Math.sin(TAU*15*t),
+  whistle: t => Math.sin(TAU*(10*t + 5*t - 5*t*t*0 + 4*Math.sin(TAU*1.5*t))),  // 오르내림
+};
+
+// STFT → cols × nbins 진폭 행렬
+function stft(sig, {T=1, M=1280, win=160, cols=50, nbins=30}){
+  const samp=[]; for(let i=0;i<M;i++) samp.push(sig(T*i/M));
+  const hop=(M-win)/(cols-1); const grid=[]; let mx=1e-9;
+  for(let c=0;c<cols;c++){ const start=Math.round(hop*c); const w=samp.slice(start, start+win);
+    const D=FT.dft(w); const colm=[]; for(let k=0;k<nbins;k++){ const m=D[k].amp; colm.push(m); if(m>mx)mx=m; } grid.push(colm); }
+  return { grid, mx };
+}
+function render(elId, sig){
+  const cols=50, nbins=30; const { grid, mx } = stft(sig, {cols, nbins});
+  const W=560, H=300, padL=30, padB=22; const cw=(W-padL)/cols, ch=(H-padB)/nbins;
+  let g='';
+  for(let c=0;c<cols;c++) for(let k=0;k<nbins;k++){ const v=grid[c][k]/mx; if(v<0.02) continue;
+    const x=padL+c*cw, y=H-padB-(k+1)*ch;
+    g+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(cw+0.6).toFixed(1)}" height="${(ch+0.6).toFixed(1)}" fill="${FT.heatColor(v)}"/>`;
+  }
+  g+=`<text x="2" y="14" fill="var(--faint)" font-size="10" font-family="JetBrains Mono">고음</text><text x="2" y="${H-padB}" fill="var(--faint)" font-size="10" font-family="JetBrains Mono">저음</text>`;
+  g+=`<text x="${padL}" y="${H-6}" fill="var(--faint)" font-size="10" font-family="JetBrains Mono">시간 →</text>`;
+  document.getElementById(elId).innerHTML=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="max-width:100%;display:block">${g}</svg>`;
+}
+
+// Step 0 : 처프 파형
+(function(){ const bd=FT.board({W:560,H:180,xmin:0,xmax:1,ymin:-1.3,ymax:1.3});
+  document.getElementById('chart0').innerHTML=`<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block"><line x1="${bd.X(0)}" y1="${bd.Y(0)}" x2="${bd.X(1)}" y2="${bd.Y(0)}" stroke="rgba(255,255,255,.15)"/>${FT.waveStrip(bd, SIGS.chirp, {color:'var(--hot)', n:900})}</svg>`;
+})();
+// Step 1 : 처프 스펙트로그램
+render('spec1', SIGS.chirp);
+// Step 2 : 패턴 토글
+(function(){ render('spec2', SIGS.chirp);
+  document.getElementById('seg').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b)return;
+    document.querySelectorAll('#seg .btn').forEach(x=>x.classList.toggle('on',x===b)); render('spec2', SIGS[b.dataset.k]); });
+})();
+</script>
+</body>
+</html>

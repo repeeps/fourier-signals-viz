@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>13 필터링 · 푸리에·신호처리, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<style>.twocol{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;} .panellab{font-size:12px;color:var(--faint);font-family:'JetBrains Mono',monospace;margin:6px 0 2px;}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag">PART 4 · Chapter 13</div>
+    <h1>필터링 — 주파수 단위로 잘라내기</h1>
+    <p class="intro">신호를 주파수로 분해할 수 있으면, <b>원하는 주파수만 남기고 나머지는 잘라낼</b> 수 있어요. 이게 <b>필터링</b>이에요. 노이즈(보통 높은 주파수)가 섞인 신호에서 노이즈 주파수만 깎으면 깨끗한 신호가 복원되죠. 시간영역에선 뒤엉켜 있던 게 <b>주파수영역에선 깔끔히 분리</b>돼 있어 가능한 일이에요. 듣고 보며 직접 해봅니다.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 노이즈 낀 신호</button>
+    <button data-s="1">01 · 주파수로 보면 분리됨</button>
+    <button data-s="2">02 · 로우패스로 깎기</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — Noisy Signal</span>
+    <h2>깨끗한 신호에 지글거리는 노이즈</h2>
+    <p class="lead">낮은 주파수의 매끈한 신호에, 높은 주파수의 <b>지글거리는 노이즈</b>가 섞였어요. 파형(시간영역)에선 둘이 뒤엉켜 지저분하죠. <b>🔊</b>로 들어보면 "삐——" 위에 "지글지글"이 얹힌 소리예요.</p>
+    <div class="row" style="gap:8px;margin:6px 0"><button class="btn play" id="hear0">🔊 노이즈 낀 소리</button></div>
+    <div class="chart-wrap" id="chart0" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 시간영역에서 노이즈만 골라내려 하면 막막해요(뒤엉켜 있으니). 그런데 <b>주파수영역으로 보면</b> 신호와 노이즈가 다른 자리에 깔끔히 나뉘어 있어요(다음 단계).</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Separated in Frequency</span>
+    <h2>주파수로 펼치면 신호와 노이즈가 따로</h2>
+    <p class="lead">같은 신호의 스펙트럼이에요. <b>낮은 주파수</b>에 진짜 신호(<span style="color:var(--good)">초록</span>), <b>높은 주파수</b>에 노이즈(<span style="color:var(--k)">빨강</span>)가 떨어져 있죠. 시간영역에선 뒤엉켰지만 주파수영역에선 <b>위치로 구분</b>돼요 — 그래서 잘라내기 쉬워요.</p>
+    <div class="chart-wrap" id="chart1" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ "노이즈는 높은 쪽에 모여 있다"는 게 핵심. 낮은 쪽만 통과시키고 높은 쪽을 막으면(=로우패스 필터) 노이즈가 사라져요. 다음 단계에서 잘라봅니다.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Low-Pass</span>
+    <h2>높은 주파수를 막으면 깨끗해진다</h2>
+    <p class="lead"><b>차단 주파수</b>를 슬라이더로 정해요 — 그보다 높은 주파수 막대를 <b>0으로 깎아요</b>(로우패스). 남은 막대로 파형을 다시 만들면 매끈한 신호가 복원돼요. <b>🔊 깨끗한 소리</b>도 들어보세요.</p>
+    <div class="ctrl"><label>차단 주파수</label><input type="range" id="cut" min="1" max="18" value="18"><span class="val" id="cutv">18</span></div>
+    <div class="row" style="gap:8px;margin:6px 0"><button class="btn play" id="hear2">🔊 필터 후 소리</button></div>
+    <div class="panellab">남은 스펙트럼 (회색=잘림)</div><div class="chart-wrap" id="spec2"></div>
+    <div class="panellab">복원된 파형</div><div class="chart-wrap" id="wave2"></div>
+    <p class="note" style="margin-top:12px">→ 차단 주파수를 5쯤으로 내리면 노이즈(11·14)가 잘려 신호(2)만 남아요 — 파형이 매끈해지고 소리가 깨끗해지죠. 너무 많이 깎으면 진짜 신호도 손상되니 균형이 중요해요.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Recap</span>
+    <h2>필터링</h2>
+    <div class="twocol">
+      <div class="callout q"><div class="ttl">주파수로 나누면 쉽다</div><p style="margin:0">시간영역에서 뒤엉킨 신호·노이즈가 주파수영역에선 위치로 분리. 그래서 잘라내기 쉬움.</p></div>
+      <div class="callout v"><div class="ttl">통과/차단</div><p style="margin:0">로우패스=낮은 쪽만 통과(노이즈 제거). 하이패스·밴드패스도 같은 원리. 이퀄라이저가 이것.</p></div>
+    </div>
+    <div class="callout good" style="margin-top:14px">
+      <p style="margin:0">필터는 "주파수 축에서 가위질"이에요 — 오디오 노이즈 제거, 이미지 블러/샤픈, 통신 채널 분리가 다 이것. 지금까지는 신호의 주파수가 <b>변하지 않는다</b> 가정했는데, 현실 소리는 시간 따라 음이 변하죠. 다음 <b>14장 스펙트로그램</b>이 "시간 따라 변하는 주파수"를 봅니다.</p>
+    </div>
+    <p class="note" style="margin-top:16px">→ <a href="14-spectrogram.html" style="color:var(--q);font-weight:700">CH 14 · 스펙트로그램</a> · <a href="index.html">목차</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · 모든 신호·필터·소리는 브라우저에서 실시간 계산 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script>
+VZ.mountTopnav('#topnav', 'CH 13 · 필터링');
+VZ.setupStepper();
+const FT = VZ.FT, TAU = FT.TAU;
+const SIG=[{amp:1,freq:2}], NOISE=[{amp:0.4,freq:11},{amp:0.35,freq:14}];
+const ALL=[...SIG,...NOISE].map(t=>({amp:t.amp,freq:t.freq,phase:0}));
+function wsvg(bd, inner){ return `<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block"><line x1="${bd.X(0)}" y1="${bd.Y(0)}" x2="${bd.X(1)}" y2="${bd.Y(0)}" stroke="rgba(255,255,255,.15)"/>${inner}</svg>`; }
+function drawWave(elId, terms){ const bd=FT.board({W:560,H:170,xmin:0,xmax:1,ymin:-1.9,ymax:1.9});
+  document.getElementById(elId).innerHTML=wsvg(bd, FT.waveStrip(bd, FT.additive(terms), {color:'var(--hot)', n:600})); }
+
+// Step 0
+(function(){ drawWave('chart0', ALL);
+  document.getElementById('hear0').onclick=()=>FT.audio.play(ALL.map(t=>({amp:t.amp,freq:t.freq})),{base:110,dur:1.5,vol:0.22});
+})();
+// Step 1 spectrum
+(function(){ const bins=[]; for(let k=1;k<=16;k++){ const t=ALL.find(t=>t.freq===k); bins.push({freq:k, amp:t?t.amp:0, sig: k<=5}); }
+  document.getElementById('chart1').innerHTML=FT.spectrum(bins,{W:560,H:200, colorFn:i=> bins[i].amp>0 ? (bins[i].sig?'var(--good)':'var(--k)') : 'var(--slate)'});
+})();
+// Step 2 lowpass
+(function(){ let cut=18;
+  function kept(){ return ALL.filter(t=>t.freq<=cut); }
+  function r(){ const bins=[]; for(let k=1;k<=16;k++){ const t=ALL.find(t=>t.freq===k); bins.push({freq:k, amp:t?t.amp:0}); }
+    document.getElementById('spec2').innerHTML=FT.spectrum(bins,{W:560,H:170, colorFn:i=> (bins[i].amp>0 && bins[i].freq<=cut)?'var(--good)':(bins[i].amp>0?'var(--slate)':'var(--slate)')});
+    drawWave('wave2', kept().length?kept().map(t=>({amp:t.amp,freq:t.freq,phase:0})):[{amp:0.001,freq:1,phase:0}]);
+  }
+  document.getElementById('cut').oninput=e=>{ cut=+e.target.value; document.getElementById('cutv').textContent=cut; r(); };
+  document.getElementById('hear2').onclick=()=>{ const k=kept(); if(k.length) FT.audio.play(k.map(t=>({amp:t.amp,freq:t.freq})),{base:110,dur:1.5,vol:0.22}); };
+  r();
+})();
+</script>
+</body>
+</html>
