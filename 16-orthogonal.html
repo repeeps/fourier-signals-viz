@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>16 직교 기저 · 푸리에·신호처리, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<style>.twocol{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag">PART 5 · Chapter 16</div>
+    <h1>직교 기저 — 사인파들은 서로 간섭하지 않는다</h1>
+    <p class="intro">15장에서 "계수 = 사영"임을 봤어요. 그런데 한 주파수를 꺼낼 때 다른 주파수가 끼어들면 곤란하죠. 다행히 <b>서로 다른 주파수의 사인파는 곱해 더하면 정확히 0</b>이에요 — 선형대수 용어로 <b>직교</b>(겹침 없음). 그래서 각 주파수는 <b>독립된 축</b>처럼 자기 칸만 차지하고, 분해가 깔끔하게 떨어져요. x축과 y축이 서로 간섭 안 하는 것과 똑같아요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 곱하면 상쇄</button>
+    <button data-s="1">01 · 같으면 ≠0, 다르면 0</button>
+    <button data-s="2">02 · 그래서 간섭 없음</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — Cancels Out</span>
+    <h2>다른 두 주파수를 곱하면 +와 −가 균형</h2>
+    <p class="lead">주파수 2와 주파수 3의 사인파를 <b>곱한</b> 결과예요(<span style="color:var(--hot)">주황</span>). +구간(<span style="color:var(--good)">초록</span>)과 −구간(<span style="color:var(--k)">빨강</span>)의 면적이 <b>정확히 같아</b> 평균이 0이에요 — 두 주파수는 "겹치지 않아요".</p>
+    <div class="chart-wrap" id="chart0" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ "곱해 더하면 0" = 직교. 두 벡터가 직각이면 내적이 0인 것과 같은 의미예요(선대 11장). 사인파 세계에선 "다른 주파수끼리는 직각"인 셈이죠.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Same: nonzero, Different: zero</span>
+    <h2>주파수를 맞추는 순간만 면적이 남는다</h2>
+    <p class="lead">한쪽은 주파수 3으로 고정, 다른쪽 주파수를 슬라이더로 바꿔 곱의 면적을 보세요. <b>주파수가 3으로 딱 맞을 때만</b> +면적이 압도해 평균이 커지고(자기 자신과의 곱), <b>다른 모든 주파수에선 0</b>이에요.</p>
+    <div class="ctrl"><label>둘째 주파수</label><input type="range" id="k1" min="1" max="7" value="2"><span class="val" id="k1v">2</span></div>
+    <div id="info1" class="callout q"></div>
+    <div class="chart-wrap" id="chart1" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 이게 분해가 작동하는 비결이에요: "주파수 3이 얼마나?"를 물을 때 주파수 3 사인파로 사영하면, <b>다른 주파수들은 모두 0으로 떨어져</b> 끼어들지 않아요. 오직 3 성분만 깔끔히 측정되죠.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — No Interference</span>
+    <h2>각 주파수는 독립된 축</h2>
+    <p class="lead">신호 = (주파수 3) + (주파수 5)예요. 여기에 주파수 3 사인파를 사영하면 — <b>주파수 5는 0으로 사라지고</b> 오직 3의 양만 정확히 나와요. 직교 덕에 한 축의 측정이 다른 축에 오염되지 않아요. 사영할 주파수를 골라보세요.</p>
+    <div class="ctrl"><label>사영할 주파수</label><input type="range" id="k2" min="1" max="7" value="3"><span class="val" id="k2v">3</span></div>
+    <div id="info2" class="callout v"></div>
+    <p class="note" style="margin-top:12px">→ 평면에서 벡터의 x좌표를 구할 때 y성분이 안 끼어드는 것과 똑같아요(x·y축이 직교하니까). 사인파들이 직교 <b>기저</b>이기에, 푸리에는 신호를 <b>깔끔히 좌표로</b> 분해할 수 있어요.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Recap</span>
+    <h2>직교 기저</h2>
+    <div class="twocol">
+      <div class="callout q"><div class="ttl">다른 주파수 = 직교</div><p style="margin:0">서로 다른 주파수 사인파는 곱해 더하면 0. 선대의 "내적 0 = 직각"과 같은 의미.</p></div>
+      <div class="callout v"><div class="ttl">간섭 없는 분해</div><p style="margin:0">각 주파수가 독립 축이라, 한 성분 측정이 다른 성분에 오염 안 됨. 그래서 분해가 유일·깔끔.</p></div>
+    </div>
+    <div class="callout good" style="margin-top:14px">
+      <p style="margin:0">사인파 = <b>직교 기저</b>, 계수 = <b>사영</b>, 변환 = 그 기저로의 <b>좌표 표현</b>. 푸리에가 선형대수의 가장 아름다운 사례인 이유예요. 마지막 <b>17장</b>에서 이 "기저 바꾸기"를 마무리하고, 그게 어떻게 <b>압축(MP3·JPEG)</b>으로 이어지는지 봅니다.</p>
+    </div>
+    <p class="note" style="margin-top:16px">→ <a href="17-basis-change.html" style="color:var(--q);font-weight:700">CH 17 · 기저 변환 + 응용</a> · <a href="index.html">목차</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · 모든 곱·면적은 브라우저에서 실시간 계산 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script>
+VZ.mountTopnav('#topnav', 'CH 16 · 직교');
+VZ.setupStepper();
+const FT = VZ.FT, TAU = FT.TAU;
+
+// Step 0
+(function(){ const bd=FT.board({W:560,H:210,xmin:0,xmax:1,ymin:-1.3,ymax:1.3});
+  const proj=FT.projectionArea(bd, x=>Math.sin(TAU*2*x), x=>Math.sin(TAU*3*x), {n:120});
+  document.getElementById('chart0').innerHTML=`<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block">${proj.svg}<line x1="${bd.X(0)}" y1="${bd.Y(0)}" x2="${bd.X(1)}" y2="${bd.Y(0)}" stroke="rgba(255,255,255,.25)"/>${FT.waveStrip(bd,x=>Math.sin(TAU*2*x)*Math.sin(TAU*3*x),{color:'var(--hot)',n:500})}</svg>`;
+})();
+// Step 1
+(function(){ let k=2; const bd=FT.board({W:560,H:220,xmin:0,xmax:1,ymin:-1.3,ymax:1.3});
+  function r(){ const proj=FT.projectionArea(bd, x=>Math.cos(TAU*3*x), x=>Math.cos(TAU*k*x), {n:120});
+    document.getElementById('chart1').innerHTML=`<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block">${proj.svg}<line x1="${bd.X(0)}" y1="${bd.Y(0)}" x2="${bd.X(1)}" y2="${bd.Y(0)}" stroke="rgba(255,255,255,.25)"/>${FT.waveStrip(bd,x=>Math.cos(TAU*3*x)*Math.cos(TAU*k*x),{color:'var(--hot)',n:500})}</svg>`;
+    const match=(k===3);
+    document.getElementById('info1').innerHTML=`<div class="ttl" style="color:${match?'var(--good)':'var(--q)'}">3 × ${k} 의 곱 평균 = ${proj.dot.toFixed(3)}</div><p style="margin:0">${match?'<b style="color:var(--good)">주파수가 같아 +면적이 압도 → 0이 아님(자기 자신과의 겹침).</b>':'<b>0에 가까움</b> — 다른 주파수라 +−가 상쇄(직교).'}</p>`;
+  }
+  document.getElementById('k1').oninput=e=>{ k=+e.target.value; document.getElementById('k1v').textContent=k; r(); }; r();
+})();
+// Step 2
+(function(){ let k=3; const sig=x=>Math.cos(TAU*3*x)+Math.cos(TAU*5*x);
+  function r(){ const dummy=FT.board({W:1,H:1,xmin:0,xmax:1}); const p=FT.projectionArea(dummy, sig, x=>Math.cos(TAU*k*x), {n:400});
+    const has=(k===3||k===5);
+    document.getElementById('info2').innerHTML=`<div class="ttl" style="color:${has?'var(--good)':'var(--v)'}">신호(3+5)를 주파수 ${k}에 사영 = ${p.dot.toFixed(2)}</div><p style="margin:0">${k===3?'<b style="color:var(--good)">0.5 — 주파수 3 성분만 정확히! 주파수 5는 직교라 0으로 사라졌어요.</b>':k===5?'<b style="color:var(--good)">0.5 — 주파수 5 성분만! 주파수 3은 끼어들지 않았어요.</b>':'<b>≈ 0</b> — 신호엔 이 주파수가 없어요(3·5만 있음). 깔끔히 0.'}</p>`;
+  }
+  document.getElementById('k2').oninput=e=>{ k=+e.target.value; document.getElementById('k2v').textContent=k; r(); }; r();
+})();
+</script>
+</body>
+</html>

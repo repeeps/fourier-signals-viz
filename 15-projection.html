@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>15 사영 = 계수 · 푸리에·신호처리, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<style>.twocol{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;} .panellab{font-size:12px;color:var(--faint);font-family:'JetBrains Mono',monospace;margin:6px 0 2px;}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag">PART 5 · Chapter 15</div>
+    <h1>사영 = 계수 — 푸리에는 그림자 내리기</h1>
+    <p class="intro">10장의 "신호를 감아 무게중심 재기"를 한 꺼풀 벗기면, 사실 <b>신호와 사인파를 겹쳐 곱해 평균낸 것</b>이에요. 이게 선형대수의 <b>내적(사영)</b> — "한 벡터를 다른 방향에 <b>그림자 내린 길이</b>"와 똑같죠. 즉 <b>푸리에 계수 = 신호를 그 사인파에 사영한 값</b>이에요. 추상적인 선대의 사영이 여기선 "그 주파수가 얼마나 들어있나"라는 구체적 의미를 가져요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 겹쳐 곱하기</button>
+    <button data-s="1">01 · 부호 면적 = 사영</button>
+    <button data-s="2">02 · 그게 곧 계수</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — Multiply &amp; Average</span>
+    <h2>"얼마나 들어있나"는 겹쳐 곱해 재요</h2>
+    <p class="lead">신호에 어떤 주파수가 얼마나 들었는지 재려면: 그 주파수의 사인파를 <b>신호에 겹쳐 곱하고</b>, 결과를 <b>평균</b>내요. 둘이 비슷하게 출렁이면 곱이 대체로 +라 평균이 커지고, 무관하면 +와 −가 섞여 평균이 0이 돼요.</p>
+    <div class="panellab">신호(<span style="color:var(--q)">파랑</span>)와 시험 사인파(<span style="color:var(--v)">보라</span>)</div>
+    <div class="chart-wrap" id="chart0" style="margin-top:4px"></div>
+    <p class="note" style="margin-top:12px">→ 이 "겹쳐 곱해 평균"이 바로 <b>내적</b>이에요(선형대수에서 두 벡터의 닮음을 재는 연산). 다음 단계에서 그 곱을 면적으로 그려, 사영의 의미를 눈으로 봐요.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Signed Area = Projection</span>
+    <h2>곱의 부호 면적이 사영의 크기</h2>
+    <p class="lead">신호 × 시험 사인파의 <b>곱</b>을 그려요(<span style="color:var(--good)">초록</span>=+면적, <span style="color:var(--k)">빨강</span>=−면적). <b>+면적이 −면적보다 많이 남으면</b> 그 주파수가 들어있는 거예요. 시험 주파수를 바꿔 면적(=사영값)이 커지는 곳을 찾으세요.</p>
+    <div class="ctrl"><label>시험 주파수</label><input type="range" id="k1" min="1" max="7" value="2"><span class="val" id="k1v">2</span></div>
+    <div id="info1" class="callout q"></div>
+    <div class="chart-wrap" id="chart1" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 신호엔 3·5배 성분이 들어 있어요. 시험 주파수를 3이나 5로 맞추면 <b>초록(+) 면적이 압도</b>해 사영값이 커지고, 다른 주파수에선 +−가 상쇄돼 거의 0이에요.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — That IS the Coefficient</span>
+    <h2>모든 주파수의 사영값 = 스펙트럼</h2>
+    <p class="lead">모든 시험 주파수에서 사영값(부호 면적의 평균)을 모으면 — 정확히 <b>스펙트럼</b>이 돼요. 즉 <b>각 막대 = 신호를 그 사인파에 사영한 값 = 푸리에 계수</b>. 10장에서 "무게중심"이라 부른 게 사실 이 사영이었어요.</p>
+    <div class="chart-wrap" id="spec2" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 선형대수를 배웠다면: 사인파들은 <b>좌표축(기저)</b>, 푸리에 계수는 <b>그 축으로의 좌표(사영)</b>예요. 평면에서 벡터를 x축·y축에 사영해 (x,y) 좌표를 얻듯, 신호를 사인파 축들에 사영해 주파수 좌표를 얻죠. 그런데 사영이 깔끔히 되려면 축들이 <b>서로 직교</b>해야 해요(다음 16장).</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Recap</span>
+    <h2>사영으로서의 푸리에</h2>
+    <div class="twocol">
+      <div class="callout q"><div class="ttl">계수 = 내적</div><p style="margin:0">푸리에 계수 = 신호와 사인파를 겹쳐 곱해 평균 = 내적 = 그 방향으로의 사영(그림자) 길이.</p></div>
+      <div class="callout v"><div class="ttl">사인파 = 좌표축</div><p style="margin:0">각 주파수 사인파가 하나의 축. 신호를 축들에 사영한 좌표가 스펙트럼.</p></div>
+    </div>
+    <div class="callout good" style="margin-top:14px">
+      <p style="margin:0">10장의 "감기"와 이번의 "사영"은 같은 것의 두 설명이에요 — 둘 다 내적이죠. 다음 <b>16장</b>에선 이 사영이 왜 서로 간섭 없이 깔끔한지 — 사인파들이 <b>직교</b>하기 때문임을 봅니다(선대 직교기저와 정확히 같은 개념).</p>
+    </div>
+    <p class="note" style="margin-top:16px">→ <a href="16-orthogonal.html" style="color:var(--q);font-weight:700">CH 16 · 직교 기저</a> · <a href="index.html">목차</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · 모든 사영·면적은 브라우저에서 실시간 계산 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script>
+VZ.mountTopnav('#topnav', 'CH 15 · 사영');
+VZ.setupStepper();
+const FT = VZ.FT, TAU = FT.TAU;
+const signal = x => Math.cos(TAU*3*x) + 0.6*Math.cos(TAU*5*x);
+
+// Step 0
+(function(){ const bd=FT.board({W:560,H:200,xmin:0,xmax:1,ymin:-1.8,ymax:1.8});
+  document.getElementById('chart0').innerHTML=`<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block"><line x1="${bd.X(0)}" y1="${bd.Y(0)}" x2="${bd.X(1)}" y2="${bd.Y(0)}" stroke="rgba(255,255,255,.15)"/>${FT.waveStrip(bd,signal,{color:'var(--q)',n:500})}${FT.waveStrip(bd,x=>Math.cos(TAU*3*x),{color:'var(--v)',n:500})}</svg>`;
+})();
+// Step 1 projection area
+(function(){ let k=2;
+  const bd=FT.board({W:560,H:230,xmin:0,xmax:1,ymin:-1.8,ymax:1.8});
+  function r(){ const basis=x=>Math.cos(TAU*k*x); const proj=FT.projectionArea(bd, signal, basis, {n:120});
+    const inner = proj.svg + `<line x1="${bd.X(0)}" y1="${bd.Y(0)}" x2="${bd.X(1)}" y2="${bd.Y(0)}" stroke="rgba(255,255,255,.25)"/>` + FT.waveStrip(bd, x=>signal(x)*basis(x), {color:'var(--hot)', n:500});
+    document.getElementById('chart1').innerHTML=`<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block">${inner}</svg>`;
+    const big=Math.abs(proj.dot)>0.1;
+    document.getElementById('info1').innerHTML=`<div class="ttl" style="color:${big?'var(--good)':'var(--q)'}">시험 주파수 ${k} · 사영값 ${proj.dot.toFixed(2)}</div><p style="margin:0">${big?'<b style="color:var(--good)">큰 사영! 이 주파수가 신호에 들어있어요.</b>':'사영값 ≈ 0 — +면적과 −면적이 상쇄돼, 이 주파수는 거의 없어요.'}</p>`;
+  }
+  document.getElementById('k1').oninput=e=>{ k=+e.target.value; document.getElementById('k1v').textContent=k; r(); }; r();
+})();
+// Step 2 spectrum from projections
+(function(){ const bins=[]; for(let k=1;k<=7;k++){ const p=FT.projectionArea(FT.board({W:1,H:1,xmin:0,xmax:1}), signal, x=>Math.cos(TAU*k*x), {n:300}); bins.push({freq:k, amp:Math.abs(p.dot)}); }
+  document.getElementById('spec2').innerHTML=FT.spectrum(bins,{W:540,H:210, colorFn:()=>'var(--pink)'});
+})();
+</script>
+</body>
+</html>

@@ -82,7 +82,7 @@
 <script>
 // 공개된 페이지만 클릭 가능 — 챕터 완성 시 파일명을 READY에 추가
 (function(){
-  const READY = new Set(['00-intro.html']);
+  const READY = new Set(['00-intro.html','01-sine.html','02-phase.html','03-rotation.html','04-superpose.html','05-decompose.html','06-fourier-series.html','07-epicycles.html','08-time-freq.html','09-phase-matters.html','10-dft.html','11-fft.html','12-sampling.html','13-filtering.html','14-spectrogram.html','15-projection.html','16-orthogonal.html','17-basis-change.html']);
   document.querySelectorAll('a.ccard').forEach(a=>{ if(READY.has(a.getAttribute('href'))) return; a.classList.add('soon'); a.addEventListener('click', e=>e.preventDefault()); });
 })();
 </script>

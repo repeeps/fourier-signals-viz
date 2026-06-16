@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>17 기저 변환 + 응용 · 푸리에·신호처리, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<style>.twocol{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;} .panellab{font-size:12px;color:var(--faint);font-family:'JetBrains Mono',monospace;margin:6px 0 2px;}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag">PART 5 · Chapter 17</div>
+    <h1>기저 변환 + 응용 — 좌표축을 바꿔 압축까지</h1>
+    <p class="intro">푸리에 변환은 결국 <b>같은 신호를 다른 좌표축으로 다시 적는 것</b>이에요 — <b>시간 축</b>에서 <b>주파수 축</b>으로. 표현만 바뀔 뿐 정보는 <b>그대로 보존</b>되고(되돌리면 원본), 그래서 안전해요. 그런데 주파수 축에선 <b>중요한 성분 몇 개에 정보가 몰려</b> 있어, 작은 것들을 버리면 거의 똑같은데 훨씬 가벼워져요 — 이게 <b>MP3·JPEG 압축</b>의 핵심이에요. 코스의 마지막, 모든 게 하나로 모입니다.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 좌표축 바꾸기</button>
+    <button data-s="1">01 · 정보 보존</button>
+    <button data-s="2">02 · 압축 (MP3·JPEG)</button>
+    <button data-s="3">03 · 완주!</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — Changing Axes</span>
+    <h2>시간 축에서 주파수 축으로</h2>
+    <p class="lead">같은 신호를 두 가지로 적을 수 있어요. <b>시간 축</b>으로 적으면 매 순간의 값이 줄줄이(많은 숫자). <b>주파수 축</b>으로 적으면 어떤 사인파가 얼마씩(몇 개의 숫자). 같은 신호, 다른 좌표예요 — 평면의 점을 (가로,세로)로도 (거리,각도)로도 적는 것처럼.</p>
+    <div class="panellab">시간 축 표현 (파형 — 매 순간의 값)</div><div class="chart-wrap" id="w0"></div>
+    <div class="panellab">주파수 축 표현 (스펙트럼 — 사인파 배합)</div><div class="chart-wrap" id="s0"></div>
+    <p class="note" style="margin-top:12px">→ 주파수 축에선 정보가 <b>몇 개의 큰 막대</b>에 몰려요. 시간 축의 수많은 값보다 훨씬 간결하죠. 이 "간결함"이 압축의 씨앗이에요(2단계 뒤).</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Information Preserved</span>
+    <h2>바꿨다 되돌리면 원본 그대로</h2>
+    <p class="lead">변환은 정보를 <b>바꾸거나 잃지 않아요</b>. 신호를 주파수 축으로 보냈다가(분해) 다시 시간 축으로 되돌리면(합성), <b>완벽히 같은 원본</b>이 나와요. 그래서 안심하고 주파수 축에서 작업할 수 있죠.</p>
+    <div class="panellab">원본(<span style="color:var(--faint)">회색</span>)과 변환→역변환 결과(<span style="color:var(--hot)">주황</span>) — 완전히 포개짐</div>
+    <div class="chart-wrap" id="w1" style="margin-top:4px"></div>
+    <p class="note" style="margin-top:12px">→ 이렇게 "되돌릴 수 있는 좌표 바꾸기"라서 푸리에는 신호를 망치지 않고 분석·가공할 수 있어요. 시간 축에서 어렵던 작업(필터·압축)을 주파수 축에서 쉽게 하고 되돌리면 끝.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Compression</span>
+    <h2>작은 막대를 버리면 — 거의 같은데 가볍다 🔊</h2>
+    <p class="lead">주파수 축에선 큰 막대 <b>몇 개</b>가 대부분의 정보를 담아요. 작은 막대들을 <b>버리고</b> 큰 것 몇 개만 남겨도 파형은 거의 그대로! 보관하는 성분 수를 줄여보세요 — 적게 남길수록 <b>더 압축</b>되지만 디테일이 흐려져요(들어보세요).</p>
+    <div class="ctrl"><label>보관할 성분 수</label><input type="range" id="keep" min="1" max="7" value="7"><span class="val" id="keepv">7</span></div>
+    <div class="row" style="gap:8px;margin:6px 0"><button class="btn play" id="hear2">🔊 압축된 소리</button></div>
+    <div class="panellab">원본(<span style="color:var(--faint)">회색</span>) vs 압축 복원(<span style="color:var(--hot)">주황</span>)</div><div class="chart-wrap" id="w2"></div>
+    <div class="panellab">보관된 스펙트럼 (회색=버림)</div><div class="chart-wrap" id="s2"></div>
+    <p class="note" style="margin-top:12px">→ <b>MP3</b>는 사람 귀에 안 들리는 주파수를, <b>JPEG</b>는 눈에 안 띄는 (고주파) 성분을 버려요. 둘 다 "주파수 축에서 작은 성분 버리기"예요. 7장 에피사이클에서 본 "화살표 적으면 뭉툭"과 똑같은 원리죠 — 디테일=고주파.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — You Made It!</span>
+    <h2>코스 완주 🎉</h2>
+    <div class="twocol">
+      <div class="callout q"><div class="ttl">변환 = 기저 바꾸기</div><p style="margin:0">시간 축 ↔ 주파수 축. 표현만 바뀌고 정보 보존(되돌리면 원본).</p></div>
+      <div class="callout v"><div class="ttl">압축의 원리</div><p style="margin:0">주파수 축에선 정보가 몇 성분에 몰림 → 작은 것 버리면 거의 같은데 가벼움(MP3·JPEG).</p></div>
+    </div>
+    <div class="callout good" style="margin-top:14px">
+      <p style="margin:0">🎉 전체 코스를 마쳤어요! <b>회전=사인파</b>로 시작해, 물결을 <b>쌓고 풀고</b>(합성·분해·에피사이클), <b>두 세계</b>(시간↔주파수·DFT·FFT)를 오가고, <b>현실 신호</b>(샘플링·필터·스펙트로그램)를 다루고, 마침내 <b>선형대수의 눈</b>(사영·직교·기저변환)으로 푸리에의 정체를 봤어요. 음악·통신·이미지·의료가 모두 이 한 아이디어 — "복잡한 것은 단순한 물결의 합" — 위에 서 있답니다.</p>
+    </div>
+    <p class="note" style="margin-top:16px">→ <a href="index.html" style="color:var(--q);font-weight:700">전체 목차로</a> · 수고했어요!</p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · 모든 변환·압축·소리는 브라우저에서 실시간 계산 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script>
+VZ.mountTopnav('#topnav', 'CH 17 · 기저변환');
+VZ.setupStepper();
+const FT = VZ.FT, TAU = FT.TAU;
+const TERMS = [{amp:1,freq:1},{amp:0.7,freq:2},{amp:0.5,freq:3},{amp:0.32,freq:5},{amp:0.22,freq:7},{amp:0.15,freq:9},{amp:0.1,freq:12}];
+function full(){ return TERMS.map(t=>({amp:t.amp,freq:t.freq,phase:0})); }
+function wsvg(bd, inner){ return `<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block"><line x1="${bd.X(0)}" y1="${bd.Y(0)}" x2="${bd.X(1)}" y2="${bd.Y(0)}" stroke="rgba(255,255,255,.15)"/>${inner}</svg>`; }
+function drawWave(elId, terms, ref){ const bd=FT.board({W:560,H:160,xmin:0,xmax:1,ymin:-2.6,ymax:2.6});
+  let s=''; if(ref) s+=FT.waveStrip(bd, FT.additive(ref), {color:'var(--faint)', n:600}); s+=FT.waveStrip(bd, FT.additive(terms), {color:'var(--hot)', n:600});
+  document.getElementById(elId).innerHTML=wsvg(bd, s); }
+function spec(elId, keptSet){ const bins=[]; for(let k=1;k<=12;k++){ const t=TERMS.find(t=>t.freq===k); bins.push({freq:k, amp:t?t.amp:0}); }
+  document.getElementById(elId).innerHTML=FT.spectrum(bins,{W:560,H:150, colorFn:i=> bins[i].amp>0 ? (!keptSet||keptSet.has(bins[i].freq)?'var(--pink)':'var(--slate)') : 'var(--slate)'}); }
+
+// Step 0
+(function(){ drawWave('w0', full()); spec('s0', null); })();
+// Step 1 (역변환 = 원본)
+(function(){ drawWave('w1', full(), full()); })();
+// Step 2 압축
+(function(){ let keep=7;
+  function topTerms(){ return TERMS.slice().sort((a,b)=>b.amp-a.amp).slice(0,keep).map(t=>({amp:t.amp,freq:t.freq,phase:0})); }
+  function keptSet(){ return new Set(topTerms().map(t=>t.freq)); }
+  function r(){ drawWave('w2', topTerms(), full()); spec('s2', keptSet()); }
+  document.getElementById('keep').oninput=e=>{ keep=+e.target.value; document.getElementById('keepv').textContent=keep; r(); };
+  document.getElementById('hear2').onclick=()=>FT.audio.play(topTerms().map(t=>({amp:t.amp,freq:t.freq})),{base:147,dur:1.5,vol:0.22});
+  r();
+})();
+</script>
+</body>
+</html>
