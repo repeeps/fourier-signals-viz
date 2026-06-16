@@ -29,7 +29,7 @@
     <span class="kicker" style="color:var(--hot)">Step 00 — Multiply &amp; Average</span>
     <h2>"얼마나 들어있나"는 겹쳐 곱해 재요</h2>
     <p class="lead">신호에 어떤 주파수가 얼마나 들었는지 재려면: 그 주파수의 사인파를 <b>신호에 겹쳐 곱하고</b>, 결과를 <b>평균</b>내요. 둘이 비슷하게 출렁이면 곱이 대체로 +라 평균이 커지고, 무관하면 +와 −가 섞여 평균이 0이 돼요.</p>
-    <div class="panellab">신호(<span style="color:var(--q)">파랑</span>)와 시험 사인파(<span style="color:var(--v)">보라</span>)</div>
+    <div class="panellab">신호(<span style="color:var(--q)">파랑</span>) · 시험 사인파(<span style="color:var(--v)">보라</span>) · 둘의 곱(<span style="color:var(--hot)">주황</span>)</div>
     <div class="chart-wrap" id="chart0" style="margin-top:4px"></div>
     <p class="note" style="margin-top:12px">→ 이 "겹쳐 곱해 평균"이 바로 <b>내적</b>이에요(선형대수에서 두 벡터의 닮음을 재는 연산). 다음 단계에서 그 곱을 면적으로 그려, 사영의 의미를 눈으로 봐요.</p>
   </section>
@@ -51,7 +51,7 @@
     <h2>모든 주파수의 사영값 = 스펙트럼</h2>
     <p class="lead">모든 시험 주파수에서 사영값(부호 면적의 평균)을 모으면 — 정확히 <b>스펙트럼</b>이 돼요. 즉 <b>각 막대 = 신호를 그 사인파에 사영한 값 = 푸리에 계수</b>. 10장에서 "무게중심"이라 부른 게 사실 이 사영이었어요.</p>
     <div class="chart-wrap" id="spec2" style="margin-top:6px"></div>
-    <p class="note" style="margin-top:12px">→ 선형대수를 배웠다면: 사인파들은 <b>좌표축(기저)</b>, 푸리에 계수는 <b>그 축으로의 좌표(사영)</b>예요. 평면에서 벡터를 x축·y축에 사영해 (x,y) 좌표를 얻듯, 신호를 사인파 축들에 사영해 주파수 좌표를 얻죠. 그런데 사영이 깔끔히 되려면 축들이 <b>서로 직교</b>해야 해요(다음 16장).</p>
+    <p class="note" style="margin-top:12px">→ 사인파 하나하나가 <b>좌표축</b>이고, 푸리에 계수는 <b>그 축으로의 좌표(=사영)</b>예요 — 평면에서 점을 x축·y축에 사영해 (x,y) 좌표를 얻는 것과 똑같죠. 신호를 사인파 축들에 사영해 "주파수 좌표"를 얻는 거예요. (이 축들의 모음을 수학에선 <b>기저</b>라 불러요.) 그런데 사영이 깔끔히 되려면 축들이 <b>서로 직교</b>해야 해요(다음 16장).</p>
   </section>
 
   <!-- STEP 3 -->
@@ -80,7 +80,7 @@ const signal = x => Math.cos(TAU*3*x) + 0.6*Math.cos(TAU*5*x);
 
 // Step 0
 (function(){ const bd=FT.board({W:560,H:200,xmin:0,xmax:1,ymin:-1.8,ymax:1.8});
-  document.getElementById('chart0').innerHTML=`<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block"><line x1="${bd.X(0)}" y1="${bd.Y(0)}" x2="${bd.X(1)}" y2="${bd.Y(0)}" stroke="rgba(255,255,255,.15)"/>${FT.waveStrip(bd,signal,{color:'var(--q)',n:500})}${FT.waveStrip(bd,x=>Math.cos(TAU*3*x),{color:'var(--v)',n:500})}</svg>`;
+  document.getElementById('chart0').innerHTML=`<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block"><line x1="${bd.X(0)}" y1="${bd.Y(0)}" x2="${bd.X(1)}" y2="${bd.Y(0)}" stroke="rgba(255,255,255,.15)"/>${FT.waveStrip(bd,x=>signal(x)*Math.cos(TAU*3*x),{color:'var(--hot)',n:500})}${FT.waveStrip(bd,signal,{color:'var(--q)',n:500})}${FT.waveStrip(bd,x=>Math.cos(TAU*3*x),{color:'var(--v)',n:500})}</svg>`;
 })();
 // Step 1 projection area
 (function(){ let k=2;

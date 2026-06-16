@@ -49,7 +49,7 @@
     <span class="kicker" style="color:var(--v)">Step 02 — Compression</span>
     <h2>작은 막대를 버리면 — 거의 같은데 가볍다 🔊</h2>
     <p class="lead">주파수 축에선 큰 막대 <b>몇 개</b>가 대부분의 정보를 담아요. 작은 막대들을 <b>버리고</b> 큰 것 몇 개만 남겨도 파형은 거의 그대로! 보관하는 성분 수를 줄여보세요 — 적게 남길수록 <b>더 압축</b>되지만 디테일이 흐려져요(들어보세요).</p>
-    <div class="ctrl"><label>보관할 성분 수</label><input type="range" id="keep" min="1" max="7" value="7"><span class="val" id="keepv">7</span></div>
+    <div class="ctrl"><label>보관할 성분 수 (7=전부=원본)</label><input type="range" id="keep" min="1" max="7" value="3"><span class="val" id="keepv">3</span></div>
     <div class="row" style="gap:8px;margin:6px 0"><button class="btn play" id="hear2">🔊 압축된 소리</button></div>
     <div class="panellab">원본(<span style="color:var(--faint)">회색</span>) vs 압축 복원(<span style="color:var(--hot)">주황</span>)</div><div class="chart-wrap" id="w2"></div>
     <div class="panellab">보관된 스펙트럼 (회색=버림)</div><div class="chart-wrap" id="s2"></div>
@@ -78,7 +78,7 @@
 VZ.mountTopnav('#topnav', 'CH 17 · 기저변환');
 VZ.setupStepper();
 const FT = VZ.FT, TAU = FT.TAU;
-const TERMS = [{amp:1,freq:1},{amp:0.7,freq:2},{amp:0.5,freq:3},{amp:0.32,freq:5},{amp:0.22,freq:7},{amp:0.15,freq:9},{amp:0.1,freq:12}];
+const TERMS = [{amp:1,freq:1},{amp:0.8,freq:2},{amp:0.6,freq:3},{amp:0.12,freq:5},{amp:0.08,freq:7},{amp:0.05,freq:9},{amp:0.04,freq:12}];
 function full(){ return TERMS.map(t=>({amp:t.amp,freq:t.freq,phase:0})); }
 function wsvg(bd, inner){ return `<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block"><line x1="${bd.X(0)}" y1="${bd.Y(0)}" x2="${bd.X(1)}" y2="${bd.Y(0)}" stroke="rgba(255,255,255,.15)"/>${inner}</svg>`; }
 function drawWave(elId, terms, ref){ const bd=FT.board({W:560,H:160,xmin:0,xmax:1,ymin:-2.6,ymax:2.6});
@@ -89,8 +89,15 @@ function spec(elId, keptSet){ const bins=[]; for(let k=1;k<=12;k++){ const t=TER
 
 // Step 0
 (function(){ drawWave('w0', full()); spec('s0', null); })();
-// Step 1 (역변환 = 원본)
-(function(){ drawWave('w1', full(), full()); })();
+// Step 1 (실제 분해→합성 왕복: 샘플 → DFT → 역변환 복원)
+(function(){
+  const base=FT.additive(full());
+  const N=128, samp=[]; for(let i=0;i<N;i++) samp.push(base(i/N));
+  const C=FT.dft(samp);
+  const recon = t => { let s=0; for(let k=0;k<N;k++){ const f = k<=N/2 ? k : k-N; s += C[k].re*Math.cos(TAU*f*t) - C[k].im*Math.sin(TAU*f*t); } return s/N; };
+  const bd=FT.board({W:560,H:160,xmin:0,xmax:1,ymin:-2.6,ymax:2.6});
+  document.getElementById('w1').innerHTML=wsvg(bd, FT.waveStrip(bd, base, {color:'var(--faint)', n:600}) + FT.waveStrip(bd, recon, {color:'var(--hot)', n:600}));
+})();
 // Step 2 압축
 (function(){ let keep=7;
   function topTerms(){ return TERMS.slice().sort((a,b)=>b.amp-a.amp).slice(0,keep).map(t=>({amp:t.amp,freq:t.freq,phase:0})); }

@@ -47,9 +47,9 @@
   <section class="panel" data-panel="2">
     <span class="kicker" style="color:var(--v)">Step 02 — Low-Pass</span>
     <h2>높은 주파수를 막으면 깨끗해진다</h2>
-    <p class="lead"><b>차단 주파수</b>를 슬라이더로 정해요 — 그보다 높은 주파수 막대를 <b>0으로 깎아요</b>(로우패스). 남은 막대로 파형을 다시 만들면 매끈한 신호가 복원돼요. <b>🔊 깨끗한 소리</b>도 들어보세요.</p>
+    <p class="lead"><b>차단 주파수</b>(이 눈금보다 높은 막대는 모두 버림)를 슬라이더로 정해요 — 그보다 높은 주파수 막대를 <b>0으로 깎아요</b>(로우패스). 남은 막대로 파형을 다시 만들면 매끈한 신호가 복원돼요. <b>🔊 깨끗한 소리</b>도 들어보세요.</p>
     <div class="ctrl"><label>차단 주파수</label><input type="range" id="cut" min="1" max="18" value="18"><span class="val" id="cutv">18</span></div>
-    <div class="row" style="gap:8px;margin:6px 0"><button class="btn play" id="hear2">🔊 필터 후 소리</button></div>
+    <div class="row" style="gap:8px;margin:6px 0"><button class="btn play" id="hear2">🔊 지금 설정으로 듣기</button></div>
     <div class="panellab">남은 스펙트럼 (회색=잘림)</div><div class="chart-wrap" id="spec2"></div>
     <div class="panellab">복원된 파형</div><div class="chart-wrap" id="wave2"></div>
     <p class="note" style="margin-top:12px">→ 차단 주파수를 5쯤으로 내리면 노이즈(11·14)가 잘려 신호(2)만 남아요 — 파형이 매끈해지고 소리가 깨끗해지죠. 너무 많이 깎으면 진짜 신호도 손상되니 균형이 중요해요.</p>

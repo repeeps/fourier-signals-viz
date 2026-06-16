@@ -40,7 +40,7 @@
     <p class="lead">신호를 짧은 조각으로 잘라 각 조각의 스펙트럼을 구하고, 왼→오로 늘어놓아요. <b>가로=시간, 세로=주파수, 밝을수록 그 순간 그 음이 강함</b>. 음이 오르는 처프는 <b>밝은 띠가 위로 올라가는</b> 사선으로 나타나요.</p>
     <div class="panellab">스펙트로그램 (밝을수록 강함 · 세로 위=고음)</div>
     <div class="chart-wrap" id="spec1" style="margin-top:4px"></div>
-    <p class="note" style="margin-top:12px">→ 파형에선 못 읽던 "언제 어떤 음"이 한눈에 보여요. 음성인식 AI가 목소리를 이 그림으로 바꿔 알아듣고, 음악 앱이 곡을 인식하는 것도 이 스펙트로그램이에요.</p>
+    <p class="note" style="margin-top:12px">→ Step 0에서 본 "파형이 촘촘해짐"이 여기선 "밝은 띠가 위로 올라감"으로 나타나요(같은 현상의 두 그림). 파형에선 못 읽던 "언제 어떤 음"이 한눈에 보이죠. 음성인식 AI가 목소리를 이 그림으로 바꿔 알아듣고, 음악 앱이 곡을 인식하는 것도 이 스펙트로그램이에요.</p>
   </section>
 
   <!-- STEP 2 -->
@@ -86,7 +86,7 @@ const SIGS = {
   chirp:   t => Math.sin(TAU*(4*t + 9*t*t)),          // 주파수 4→22 상승
   tone:    t => Math.sin(TAU*10*t),
   two:     t => Math.sin(TAU*6*t) + Math.sin(TAU*15*t),
-  whistle: t => Math.sin(TAU*(10*t + 5*t - 5*t*t*0 + 4*Math.sin(TAU*1.5*t))),  // 오르내림
+  whistle: t => Math.sin(TAU*(12*t + 0.6*Math.sin(TAU*2*t))),   // 순간주파수 12 ± 7 오르내림
 };
 
 // STFT → cols × nbins 진폭 행렬
@@ -99,14 +99,20 @@ function stft(sig, {T=1, M=1280, win=160, cols=50, nbins=30}){
 }
 function render(elId, sig){
   const cols=50, nbins=30; const { grid, mx } = stft(sig, {cols, nbins});
-  const W=560, H=300, padL=30, padB=22; const cw=(W-padL)/cols, ch=(H-padB)/nbins;
+  const W=560, H=300, padL=34, padB=22, padR=58; const cw=(W-padL-padR)/cols, ch=(H-padB)/nbins;
   let g='';
   for(let c=0;c<cols;c++) for(let k=0;k<nbins;k++){ const v=grid[c][k]/mx; if(v<0.02) continue;
     const x=padL+c*cw, y=H-padB-(k+1)*ch;
     g+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(cw+0.6).toFixed(1)}" height="${(ch+0.6).toFixed(1)}" fill="${FT.heatColor(v)}"/>`;
   }
-  g+=`<text x="2" y="14" fill="var(--faint)" font-size="10" font-family="JetBrains Mono">고음</text><text x="2" y="${H-padB}" fill="var(--faint)" font-size="10" font-family="JetBrains Mono">저음</text>`;
-  g+=`<text x="${padL}" y="${H-6}" fill="var(--faint)" font-size="10" font-family="JetBrains Mono">시간 →</text>`;
+  // 세로축 = 주파수 눈금(bin 번호)
+  [0,10,20,30].forEach(k=>{ const y=H-padB-k*ch; g+=`<text x="${padL-5}" y="${(y+3).toFixed(1)}" text-anchor="end" fill="var(--faint)" font-size="10" font-family="JetBrains Mono">${k}</text>`; });
+  g+=`<text x="6" y="${(H-padB)/2}" fill="var(--muted)" font-size="10" font-family="JetBrains Mono" transform="rotate(-90 10 ${(H-padB)/2})">주파수 →</text>`;
+  g+=`<text x="${padL}" y="${H-6}" fill="var(--muted)" font-size="10" font-family="JetBrains Mono">시간 →</text>`;
+  // 색 범례 (약→강 세로 그라데이션)
+  const lx=W-padR+14, lh=H-padB-20; let leg='';
+  for(let i=0;i<24;i++){ const v=i/23; leg+=`<rect x="${lx}" y="${(20+(23-i)/24*lh).toFixed(1)}" width="14" height="${(lh/24+0.6).toFixed(1)}" fill="${FT.heatColor(v)}"/>`; }
+  g+=leg+`<text x="${lx+7}" y="14" text-anchor="middle" fill="var(--faint)" font-size="10" font-family="JetBrains Mono">강</text><text x="${lx+7}" y="${H-padB+12}" text-anchor="middle" fill="var(--faint)" font-size="10" font-family="JetBrains Mono">약</text>`;
   document.getElementById(elId).innerHTML=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="max-width:100%;display:block">${g}</svg>`;
 }
 
