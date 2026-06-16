@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>03 회전 = 사인파 · 푸리에·신호처리, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<style>.twocol{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag">PART 1 · Chapter 03</div>
+    <h1>회전 = 사인파 — 위상자(회전하는 화살표)</h1>
+    <p class="intro">사인파를 보는 가장 강력한 방법: <b>원을 일정하게 도는 화살표</b>로 보는 거예요. 그 화살표 끝의 <b>높이(그림자)</b>를 시간에 따라 그리면 정확히 사인파가 나와요. 이 <b>회전하는 화살표 = 위상자(phasor)</b>가 푸리에의 진짜 주인공이에요. 진폭·주파수·위상이 모두 회전의 성질로 한데 모이죠 — 복소수 없이, 그냥 도는 화살표로.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 그림자</button>
+    <button data-s="1">01 · 회전→사인파</button>
+    <button data-s="2">02 · 세 손잡이</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — The Shadow</span>
+    <h2>도는 점의 "높이"가 사인파의 한 점</h2>
+    <p class="lead">화살표가 어떤 각도에 있을 때, 그 끝의 <b>높이(세로 위치)</b>가 그 순간 사인파의 값이에요. 화살표를 한 바퀴 돌리면 그 높이는 위→아래→위로 부드럽게 오르내리죠 — 그게 사인파예요. 각도를 끌어보세요.</p>
+    <div class="ctrl"><label>화살표 각도</label><input type="range" id="ang0" min="0" max="360" value="40"><span class="val" id="ang0v">40°</span></div>
+    <div class="chart-wrap" id="chart0" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 각도 0°·180°에서 높이=0, 90°에서 가장 높고, 270°에서 가장 낮아요. 이 "높이의 변화"가 사인파. 이제 화살표를 <b>일정 속도로 계속 돌려</b> 그 그림자를 흘려보내면(다음 단계) 완전한 물결이 나와요.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Rotation Becomes a Wave</span>
+    <h2>일정하게 돌리면 그림자가 물결을 그린다</h2>
+    <p class="lead">화살표가 등속으로 돌아요(왼쪽 원). 그 끝의 높이를 매 순간 오른쪽으로 흘려보내면 — 사인파가 태어나요. 점선이 "지금 높이 = 물결의 시작점"을 이어줘요. ▶/⏸로 보세요.</p>
+    <div class="row" style="gap:8px;margin:6px 0"><button class="btn" id="play1">⏸ 정지</button></div>
+    <div class="chart-wrap" id="chart1" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ <b>한 바퀴 = 한 주기</b>예요. 빨리 돌수록(주파수↑) 물결이 촘촘해지죠. 회전과 물결은 <b>같은 것의 두 모습</b> — 옆에서 본 회전이 곧 사인파예요.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Three Knobs</span>
+    <h2>사인파의 세 요소 = 회전의 세 성질</h2>
+    <p class="lead">위상자 하나로 사인파의 세 손잡이가 다 표현돼요: <b>화살표 길이 = 진폭</b>, <b>회전 속도 = 주파수</b>, <b>출발 각도 = 위상</b>. 세 슬라이더로 회전과 물결이 함께 변하는 걸 보세요.</p>
+    <div class="row" style="gap:14px;margin:6px 0;flex-wrap:wrap">
+      <div class="ctrl" style="margin:0"><label>길이(진폭)</label><input type="range" id="amp2" min="30" max="120" value="90"><span class="val" id="amp2v">0.90</span></div>
+      <div class="ctrl" style="margin:0"><label>속도(주파수)</label><input type="range" id="freq2" min="1" max="4" value="1"><span class="val" id="freq2v">1</span></div>
+      <div class="ctrl" style="margin:0"><label>출발각(위상)</label><input type="range" id="phase2" min="0" max="360" value="0"><span class="val" id="phase2v">0°</span></div>
+    </div>
+    <div class="chart-wrap" id="chart2" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 진폭·주파수·위상이 따로 노는 세 숫자가 아니라, <b>한 회전 화살표의 길이·속도·출발각</b>으로 묶여요. 그래서 사인파 하나 = 위상자 하나. 다음 2부에선 <b>여러 위상자를 더해</b> 복잡한 신호를 만들고 분해해요.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Recap</span>
+    <h2>위상자: 푸리에의 주인공</h2>
+    <div class="twocol">
+      <div class="callout q"><div class="ttl">회전 = 사인파</div><p style="margin:0">등속 회전 화살표 끝의 높이(그림자) = 사인파. 옆에서 본 원운동.</p></div>
+      <div class="callout v"><div class="ttl">세 성질 = 세 요소</div><p style="margin:0">길이=진폭, 속도=주파수, 출발각=위상. 사인파 하나 = 위상자 하나.</p></div>
+    </div>
+    <div class="callout good" style="margin-top:14px">
+      <p style="margin:0">"회전하는 화살표"는 사실 수학에선 <b>복소수</b>라고 부르지만 — 이 코스에선 끝까지 <b>그냥 도는 화살표</b>로만 다뤄요. 이거면 충분하거든요. 다음 <b>04장</b>부터 위상자를 <b>여러 개 더해</b> 복잡한 파형을 만들고(합성), 거꾸로 분해하며, 결국 <b>에피사이클</b>로 그림까지 그립니다.</p>
+    </div>
+    <p class="note" style="margin-top:16px">→ <a href="04-superpose.html" style="color:var(--q);font-weight:700">CH 04 · 파동의 덧셈</a> · <a href="index.html">목차</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · 모든 회전·파형은 브라우저에서 실시간 계산 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script>
+VZ.mountTopnav('#topnav', 'CH 03 · 위상자');
+VZ.setupStepper();
+const FT = VZ.FT, TAU = FT.TAU;
+
+// 공통: 왼쪽 복소평면 위상자 + 오른쪽 파형 + 그림자 연결선 (한 SVG)
+function combined(elId, {amp, freq, phase, t}){
+  const cb = FT.cboard({W:240,H:240,pad:16,range:1.25});  // unit=(240-32)/2.5=83.2, oy=120
+  const bd = FT.board({W:380,H:240,xmin:0,xmax:2,ymin:-1.25,ymax:1.25,padL:10,padR:14,padT:16,padB:16});
+  const sample = x => amp*Math.sin(TAU*freq*(t - x) + phase);
+  const ph = FT.phasor(cb, {cx:0,cy:0,amp,freq,phase,t,color:'var(--q)'});
+  let s = `<g>${FT.cgrid(cb,{rings:[1]})}${ph.svg}</g>`;
+  let wave = `<line x1="${bd.X(0)}" y1="${bd.Y(0).toFixed(1)}" x2="${bd.X(2)}" y2="${bd.Y(0).toFixed(1)}" stroke="rgba(255,255,255,.15)"/>` + FT.waveStrip(bd, sample, {color:'var(--hot)', n:220});
+  s += `<g transform="translate(240,0)">${wave}</g>`;
+  const yy = cb.Y(ph.tip.im);
+  s += `<line x1="${cb.X(ph.tip.re).toFixed(1)}" y1="${yy.toFixed(1)}" x2="${(240+bd.X(0)).toFixed(1)}" y2="${yy.toFixed(1)}" stroke="var(--hot)" stroke-width="1" stroke-dasharray="3 3" opacity="0.7"/><circle cx="${(240+bd.X(0)).toFixed(1)}" cy="${yy.toFixed(1)}" r="4" fill="var(--hot)"/>`;
+  document.getElementById(elId).innerHTML = `<svg width="620" height="240" viewBox="0 0 620 240" style="max-width:100%;display:block">${s}</svg>`;
+}
+
+// Step 0 : 정적 그림자 (각도 슬라이더)
+(function(){ let deg=40;
+  const cb=FT.cboard({W:240,H:240,pad:16,range:1.25});
+  function r(){ const ang=deg*Math.PI/180; const tip={re:Math.cos(ang),im:Math.sin(ang)};
+    let s=`<g>${FT.cgrid(cb,{rings:[1]})}`;
+    s+=VZ.LA.arrowPx(cb.X(0),cb.Y(0),cb.X(tip.re),cb.Y(tip.im),'var(--q)',{lw:2.5});
+    s+=`<line x1="${cb.X(tip.re).toFixed(1)}" y1="${cb.Y(tip.im).toFixed(1)}" x2="${cb.X(0).toFixed(1)}" y2="${cb.Y(tip.im).toFixed(1)}" stroke="var(--hot)" stroke-width="1.4" stroke-dasharray="3 3"/>`;
+    s+=`<circle cx="${cb.X(0).toFixed(1)}" cy="${cb.Y(tip.im).toFixed(1)}" r="4" fill="var(--hot)"/><text x="${(cb.X(0)+8).toFixed(1)}" y="${(cb.Y(tip.im)-6).toFixed(1)}" fill="var(--hot)" font-size="11" font-family="JetBrains Mono">높이=${tip.im.toFixed(2)}</text></g>`;
+    document.getElementById('chart0').innerHTML=`<svg width="240" height="240" viewBox="0 0 240 240" style="max-width:100%;display:block">${s}</svg>`;
+  }
+  document.getElementById('ang0').oninput=e=>{ deg=+e.target.value; document.getElementById('ang0v').textContent=deg+'°'; r(); }; r();
+})();
+
+// Step 1 : 회전 → 사인파 (clock)
+(function(){
+  const ck=FT.clock(({t})=>combined('chart1',{amp:1,freq:1,phase:0,t}), {speed:0.45});
+  const btn=document.getElementById('play1');
+  btn.onclick=()=>{ ck.toggle(); btn.textContent=ck.running?'⏸ 정지':'▶ 재생'; };
+})();
+
+// Step 2 : 세 손잡이 (clock + sliders)
+(function(){ let amp=0.9, freq=1, phase=0;
+  FT.clock(({t})=>combined('chart2',{amp,freq,phase,t}), {speed:0.45});
+  document.getElementById('amp2').oninput=e=>{ amp=+e.target.value/100; document.getElementById('amp2v').textContent=amp.toFixed(2); };
+  document.getElementById('freq2').oninput=e=>{ freq=+e.target.value; document.getElementById('freq2v').textContent=freq; };
+  document.getElementById('phase2').oninput=e=>{ const d=+e.target.value; phase=d*Math.PI/180; document.getElementById('phase2v').textContent=d+'°'; };
+})();
+</script>
+</body>
+</html>

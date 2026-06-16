@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>02 위상·간섭 · 푸리에·신호처리, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<style>.twocol{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag">PART 1 · Chapter 02</div>
+    <h1>위상 — 같은 물결, 다른 타이밍</h1>
+    <p class="intro"><b>위상</b>은 물결이 <b>언제 시작하는가</b>(좌우 위치)예요. 혼자 있을 땐 별것 아니지만, <b>두 물결이 만나면</b> 위상차가 모든 걸 결정해요 — 딱 맞으면 <b>두 배로 커지고</b>(보강), 정반대면 <b>완전히 사라져요</b>(상쇄). 이 상쇄가 노이즈 캔슬링 헤드폰의 원리예요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 좌우로 밀기</button>
+    <button data-s="1">01 · 두 물결의 위상차</button>
+    <button data-s="2">02 · 보강과 상쇄</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — Sliding</span>
+    <h2>위상 = 물결을 좌우로 미는 손잡이</h2>
+    <p class="lead">위상을 바꾸면 같은 물결이 <b>좌우로 미끄러져요</b>. 높이도 촘촘함도 그대로, 출발 타이밍만 바뀌죠. (회색은 위상 0 기준)</p>
+    <div class="ctrl"><label>위상</label><input type="range" id="ph0" min="0" max="360" value="90"><span class="val" id="ph0v">90°</span></div>
+    <div class="chart-wrap" id="chart0" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 360°를 밀면 제자리로 돌아와요(한 바퀴). 위상은 "각도"로 재는데, 이게 다음 03장의 <b>회전하는 화살표</b>와 정확히 연결돼요 — 위상 = 화살표의 출발 각도.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Phase Difference</span>
+    <h2>두 물결을 나란히, 위상만 다르게</h2>
+    <p class="lead">같은 진폭·주파수의 두 물결(<span style="color:var(--q)">파랑</span>·<span style="color:var(--v)">보라</span>)이 있어요. 위상차를 바꾸면 둘이 어긋나는 정도가 달라져요. <b>0°면 완전히 포개지고</b>, <b>180°면 정반대</b>(한쪽이 위일 때 다른쪽은 아래)예요.</p>
+    <div class="ctrl"><label>위상차</label><input type="range" id="ph1" min="0" max="360" value="120"><span class="val" id="ph1v">120°</span></div>
+    <div class="chart-wrap" id="chart1" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 다음 단계에서 이 둘을 <b>더하면</b> 무슨 일이 생기는지 봐요. 0°와 180°에서 정반대 결과가 나오는 게 핵심이에요.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Add: Boost or Cancel</span>
+    <h2>더하면 — 두 배가 되거나, 사라지거나</h2>
+    <p class="lead">두 물결을 <b>더한 결과</b>(<span style="color:var(--hot)">주황</span>)를 봐요. 위상차를 바꾸기 <b>전에 예측</b>해보세요: 0°에선? 180°에선? <b>0°면 키가 두 배(보강간섭)</b>, <b>180°면 완전히 평평(상쇄간섭)</b> — 같은 두 물결인데 타이밍만으로 정반대!</p>
+    <div class="ctrl"><label>위상차</label><input type="range" id="ph2" min="0" max="360" value="0"><span class="val" id="ph2v">0°</span></div>
+    <div id="info2" class="callout v"></div>
+    <div class="chart-wrap" id="chart2" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ <b>노이즈 캔슬링 헤드폰</b>이 바로 이거예요: 들어오는 소음과 <b>정반대 위상</b>의 파동을 만들어 더하면 → 상쇄 → 조용! 위상이 진폭만큼 중요하다는 첫 신호죠(9장에서 더).</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Recap</span>
+    <h2>위상이 하는 일</h2>
+    <div class="twocol">
+      <div class="callout q"><div class="ttl">혼자선 위치만</div><p style="margin:0">위상은 물결을 좌우로 미는 것 — 모양·크기·촘촘함은 그대로. 각도(0~360°)로 잰다.</p></div>
+      <div class="callout v"><div class="ttl">만나면 결정적</div><p style="margin:0">두 물결의 위상차가 보강(0°, 2배)↔상쇄(180°, 0)를 가른다. 노이즈 캔슬링의 원리.</p></div>
+    </div>
+    <div class="callout good" style="margin-top:14px">
+      <p style="margin:0">위상은 푸리에에서 자주 무시되지만(진폭 막대만 보여주는 경우가 많아요), 사실 <b>"무엇이 어디에 있나"를 담는 핵심 정보</b>예요. 다음 <b>03장</b>에서 위상·진폭·주파수가 모두 <b>하나의 회전하는 화살표</b>로 합쳐지는 걸 봅니다 — 푸리에의 진짜 주인공이죠.</p>
+    </div>
+    <p class="note" style="margin-top:16px">→ <a href="03-rotation.html" style="color:var(--q);font-weight:700">CH 03 · 회전 = 사인파</a> · <a href="index.html">목차</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · 모든 파형은 브라우저에서 실시간 계산 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script>
+VZ.mountTopnav('#topnav', 'CH 02 · 위상');
+VZ.setupStepper();
+const FT = VZ.FT, TAU = FT.TAU;
+function svg(bd, inner){ return `<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block"><line x1="${bd.X(0)}" y1="${bd.Y(0).toFixed(1)}" x2="${bd.X(1)}" y2="${bd.Y(0).toFixed(1)}" stroke="rgba(255,255,255,.15)"/>${inner}</svg>`; }
+
+// Step 0
+(function(){ let ph=Math.PI/2;
+  const bd=FT.board({W:560,H:200,xmin:0,xmax:1,ymin:-1.3,ymax:1.3});
+  const r=()=>document.getElementById('chart0').innerHTML=svg(bd, FT.waveStrip(bd,x=>0.9*Math.sin(TAU*2*x),{color:'var(--faint)',n:400})+FT.waveStrip(bd,x=>0.9*Math.sin(TAU*2*x+ph),{color:'var(--q)',n:400}));
+  document.getElementById('ph0').oninput=e=>{ const d=+e.target.value; ph=d*Math.PI/180; document.getElementById('ph0v').textContent=d+'°'; r(); }; r();
+})();
+// Step 1
+(function(){ let ph=120*Math.PI/180;
+  const bd=FT.board({W:560,H:210,xmin:0,xmax:1,ymin:-1.3,ymax:1.3});
+  const r=()=>document.getElementById('chart1').innerHTML=svg(bd, FT.waveStrip(bd,x=>0.9*Math.sin(TAU*2*x),{color:'var(--q)',n:400})+FT.waveStrip(bd,x=>0.9*Math.sin(TAU*2*x+ph),{color:'var(--v)',n:400}));
+  document.getElementById('ph1').oninput=e=>{ const d=+e.target.value; ph=d*Math.PI/180; document.getElementById('ph1v').textContent=d+'°'; r(); }; r();
+})();
+// Step 2
+(function(){ let ph=0;
+  const bd=FT.board({W:560,H:230,xmin:0,xmax:1,ymin:-2.3,ymax:2.3});
+  function r(){ const deg=Math.round(ph*180/Math.PI);
+    const A=x=>0.9*Math.sin(TAU*2*x), B=x=>0.9*Math.sin(TAU*2*x+ph), S=x=>A(x)+B(x);
+    const inner = FT.waveStrip(bd,A,{color:'var(--faint)',n:400})+FT.waveStrip(bd,B,{color:'var(--faint)',n:400})+FT.waveStrip(bd,S,{color:'var(--hot)',n:400});
+    document.getElementById('chart2').innerHTML=svg(bd, inner);
+    const peak=Math.abs(2*0.9*Math.cos(ph/2));
+    const msg = deg<15 ? '<b style="color:var(--good)">보강간섭! 키가 두 배로.</b>' : deg>165&&deg<195 ? '<b style="color:var(--k)">상쇄간섭! 완전히 사라져 평평.</b>' : '부분적으로 겹쳐 중간 크기.';
+    document.getElementById('info2').innerHTML=`<div class="ttl" style="color:var(--v)">위상차 ${deg}° · 합의 최대 높이 ≈ ${peak.toFixed(2)}</div><p style="margin:0">${msg}</p>`;
+  }
+  document.getElementById('ph2').oninput=e=>{ const d=+e.target.value; ph=d*Math.PI/180; document.getElementById('ph2v').textContent=d+'°'; r(); }; r();
+})();
+</script>
+</body>
+</html>
