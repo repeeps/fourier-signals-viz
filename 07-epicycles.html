@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>07 에피사이클 · 푸리에·신호처리, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<style>.twocol{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;} .chart-wrap{display:flex;justify-content:center;}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag">PART 2 · Chapter 07</div>
+    <h1>에피사이클 — 회전 화살표로 그림을 그리다 ⭐</h1>
+    <p class="intro">이 트랙에서 가장 아름다운 장면이에요. 회전하는 화살표 끝에 더 작은 회전 화살표를, 그 끝에 또 더 작은 걸… 수십 개를 이어 붙이면, <b>맨 끝 펜이 손글씨도 하트도 그려내요</b>. 각 화살표 하나가 <b>하나의 주파수 성분</b> — 즉 <b>"그림을 그리는 것 = 그림을 주파수로 분해하는 것"</b>이에요. 푸리에 분해가 눈앞에서 춤춥니다.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 회전 위의 회전</button>
+    <button data-s="1">01 · 하트 그리기</button>
+    <button data-s="2">02 · 화살표 수 = 정밀도</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — Wheels on Wheels</span>
+    <h2>화살표 끝에 화살표를 달면</h2>
+    <p class="lead">큰 화살표가 돌고, 그 <b>끝</b>에 매달린 작은 화살표가 또 돌아요(다른 속도로). 그러면 작은 화살표의 펜 끝은 단순한 원이 아닌 <b>복잡한 곡선</b>을 그려요. 두 개만 이어도 이래요. ▶/⏸로 보세요.</p>
+    <div class="row" style="gap:8px;margin:6px 0"><button class="btn" id="play0">⏸ 정지</button></div>
+    <div class="chart-wrap" id="chart0" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 화살표(=위상자) 하나는 사인파 하나(3장)였죠. 이어 붙이면 그 <b>합</b>이 펜 위치가 돼요 — 4장의 "파동의 덧셈"이 평면 위 그림으로 나타난 거예요. 더 많이 이으면?</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Draw a Heart</span>
+    <h2>수십 개를 이으면 하트가 그려진다</h2>
+    <p class="lead">하트 모양을 푸리에로 분해해 얻은 <b>회전 화살표들</b>이에요. 큰 것부터 작은 것까지 머리-꼬리로 이어져 돌면, 맨 끝 펜이 정확히 하트를 그려내요. ▶/⏸로 감상하세요.</p>
+    <div class="row" style="gap:8px;margin:6px 0"><button class="btn" id="play1">⏸ 정지</button><button class="btn" id="clear1" style="border-color:var(--line);background:var(--panel-2);color:var(--muted)">↺ 자취 지우기</button></div>
+    <div class="chart-wrap" id="chart1" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 각 화살표는 <b>특정 주파수로 도는 한 성분</b>이에요. 큰 화살표(낮은 주파수)가 대략의 형태를, 작은 화살표(높은 주파수)가 디테일을 그리죠. "그림 = 주파수들의 합"이 이렇게 눈에 보여요.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — More Arrows = Sharper</span>
+    <h2>화살표가 많을수록 더 정밀하게</h2>
+    <p class="lead">사용하는 화살표(주파수 성분) 수를 조절해 보세요. <b>적으면 뭉툭</b>한 윤곽만, <b>많으면 또렷한</b> 하트. 6장에서 하모닉을 늘려 사각파가 또렷해진 것과 똑같은 원리예요(여기선 평면 그림으로).</p>
+    <div class="ctrl"><label>화살표 수</label><input type="range" id="k2" min="2" max="64" value="6"><span class="val" id="k2v">6</span></div>
+    <div class="chart-wrap" id="chart2" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 적은 화살표 = 낮은 주파수만 = 큰 형태만. 디테일(날카로운 끝)은 높은 주파수(작고 빠른 화살표)가 채워요. 그래서 "디테일 = 고주파"라는 직관이 생기죠 — 이미지 압축(17장 JPEG)에서 다시 만나요.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Recap</span>
+    <h2>에피사이클</h2>
+    <div class="twocol">
+      <div class="callout q"><div class="ttl">화살표 = 주파수 성분</div><p style="margin:0">회전 화살표 하나 = 한 주파수. 이어 붙인 합이 펜 위치. 길이=진폭, 속도=주파수, 출발각=위상.</p></div>
+      <div class="callout v"><div class="ttl">그리기 = 분해</div><p style="margin:0">그림의 좌표를 따라가는 회전 화살표들을 구하는 것 = 그림을 주파수로 분해(푸리에). 마법 아닌 합성.</p></div>
+    </div>
+    <div class="callout good" style="margin-top:14px">
+      <p style="margin:0">에피사이클은 "복소 푸리에"의 시각화예요(화살표 = 복소수, 끝까지 복소수란 말은 안 썼지만요). 이걸로 PART 2를 마칩니다. 다음 PART 3에선 신호를 <b>시간</b>과 <b>주파수</b> 두 창으로 나란히 보고, 컴퓨터가 분해를 해내는 <b>DFT·FFT</b>를 봐요.</p>
+    </div>
+    <p class="note" style="margin-top:16px">→ <a href="08-time-freq.html" style="color:var(--q);font-weight:700">CH 08 · 시간 ↔ 주파수</a> · <a href="index.html">목차</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · 모든 회전·궤적은 브라우저에서 실시간 계산 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script>
+VZ.mountTopnav('#topnav', 'CH 07 · 에피사이클');
+VZ.setupStepper();
+const FT = VZ.FT, TAU = FT.TAU;
+
+// 하트 곡선 → 복소 점 → 푸리에 계수 → 에피사이클 항(크기순)
+function heartPts(N){ const p=[]; for(let i=0;i<N;i++){ const th=TAU*i/N;
+  const x=16*Math.pow(Math.sin(th),3);
+  const y=13*Math.cos(th)-5*Math.cos(2*th)-2*Math.cos(3*th)-Math.cos(4*th);
+  p.push({re:x, im:y}); } let mx=0; p.forEach(q=>mx=Math.max(mx,Math.abs(q.re),Math.abs(q.im)));
+  p.forEach(q=>{ q.re=q.re/mx*1.05; q.im=q.im/mx*1.05; }); return p; }
+const COEFFS = FT.dftComplex(heartPts(128));
+const ALLTERMS = FT.toEpicycleTerms(COEFFS);  // 크기순 정렬, 부호있는 주파수
+
+function renderEpi(elId, terms, t, tr){
+  const cb = FT.cboard({W:380,H:380,pad:20,range:1.3});
+  const ep = FT.epicycles(cb, terms, ((t%1)+1)%1, {});
+  const px = cb.X(ep.tip.re), py = cb.Y(ep.tip.im);
+  if (tr) tr.push({ x: px, y: py });
+  let s = '';
+  if (tr) s += `<path d="${tr.path()}" fill="none" stroke="var(--hot)" stroke-width="2.2" stroke-linejoin="round"/>`;
+  s += ep.svg;
+  s += `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3.5" fill="var(--hot)"/>`;
+  document.getElementById(elId).innerHTML = `<svg width="380" height="380" viewBox="0 0 380 380" style="max-width:100%;display:block">${s}</svg>`;
+}
+
+// Step 0 : 두 개만
+(function(){
+  const terms=[{amp:0.8,freq:1,phase:0},{amp:0.4,freq:4,phase:0}];
+  const ck=FT.clock(({t})=>renderEpi('chart0', terms, t, null), {speed:0.18});
+  const b=document.getElementById('play0'); b.onclick=()=>{ ck.toggle(); b.textContent=ck.running?'⏸ 정지':'▶ 재생'; };
+})();
+// Step 1 : 하트 (전체 항)
+(function(){
+  const terms=ALLTERMS.slice(0,80); let tr=FT.trail({max:1200}); let lastF=-1;
+  const ck=FT.clock(({t})=>{ const fl=Math.floor(t); if(fl!==lastF){ tr.clear(); lastF=fl; } renderEpi('chart1', terms, t, tr); }, {speed:0.13});
+  const b=document.getElementById('play1'); b.onclick=()=>{ ck.toggle(); b.textContent=ck.running?'⏸ 정지':'▶ 재생'; };
+  document.getElementById('clear1').onclick=()=>tr.clear();
+})();
+// Step 2 : 화살표 수
+(function(){ let K=6, tr=FT.trail({max:1200}), lastF=-1;
+  let terms=ALLTERMS.slice(0,K);
+  const ck=FT.clock(({t})=>{ const fl=Math.floor(t); if(fl!==lastF){ tr.clear(); lastF=fl; } renderEpi('chart2', terms, t, tr); }, {speed:0.16});
+  document.getElementById('k2').oninput=e=>{ K=+e.target.value; document.getElementById('k2v').textContent=K; terms=ALLTERMS.slice(0,K); tr.clear(); };
+})();
+</script>
+</body>
+</html>

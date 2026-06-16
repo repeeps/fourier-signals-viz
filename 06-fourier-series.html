@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>06 푸리에 급수 · 푸리에·신호처리, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<style>.twocol{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag">PART 2 · Chapter 06</div>
+    <h1>푸리에 급수 — 둥근 사인으로 각진 사각파를</h1>
+    <p class="intro">둥글둥글한 사인파만 더해서 <b>칼같이 각진 사각파</b>를 만들 수 있을까요? 놀랍게도 <b>됩니다</b>. 알맞은 하모닉을 무한히 쌓으면 어떤 주기 신호든 사인의 합으로 표현돼요 — 이게 <b>푸리에 급수</b>예요. 항을 늘릴수록 사각파에 가까워지는 과정과, 모서리에 끝까지 남는 작은 출렁임(깁스 현상)을 봐요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 목표: 사각파</button>
+    <button data-s="1">01 · 하모닉 쌓기</button>
+    <button data-s="2">02 · 모서리의 깁스 현상</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — The Target</span>
+    <h2>사각파: 갑자기 위, 갑자기 아래</h2>
+    <p class="lead"><b>사각파</b>는 값이 +1에 머물다 <b>뚝</b> −1로 떨어지길 반복하는 신호예요(디지털 신호의 기본). 모서리가 수직이라, 둥근 사인파로 이걸 흉내내는 게 가능할지 의심스럽죠. 아래가 목표 모양이에요.</p>
+    <div class="chart-wrap" id="chart0" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 비결은 <b>홀수 하모닉</b>(1·3·5·7…배 주파수)을 <b>1, 1/3, 1/5, 1/7…</b> 크기로 더하는 거예요. 다음 단계에서 하나씩 쌓아보면 정말 사각파가 나타나요.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Stacking Harmonics</span>
+    <h2>홀수 하모닉을 더할수록 각져진다</h2>
+    <p class="lead">하모닉을 하나(둥근 사인)부터 시작해 <b>점점 더 많이</b> 더해보세요. 항이 늘수록 평평한 부분은 더 평평해지고 모서리는 더 가팔라져 — <b>점점 사각파</b>(회색)에 가까워져요. ⏭ 늘리기 전에 모양을 예측해보세요.</p>
+    <div class="ctrl"><label>하모닉 수</label><input type="range" id="n1" min="1" max="40" value="3"><span class="val" id="n1v">3</span></div>
+    <div class="chart-wrap" id="chart1" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 무한히 더하면 <b>정확히</b> 사각파가 돼요. 유한하면 근사값이죠. "어떤 모양이든 사인의 합"이라는 푸리에의 약속이 눈앞에서 실현되는 순간이에요.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — The Gibbs Overshoot</span>
+    <h2>모서리에 끝까지 남는 작은 뿔</h2>
+    <p class="lead">모서리를 확대해 봐요. 항을 아무리 늘려도 모서리 바로 옆에 <b>약 9% 튀어나오는 뿔</b>이 사라지지 않아요(깁스 현상). 항이 늘면 뿔이 <b>좁아질 뿐</b>, 높이는 그대로예요. 하모닉 수를 키워 확인하세요.</p>
+    <div class="ctrl"><label>하모닉 수</label><input type="range" id="n2" min="3" max="60" value="12"><span class="val" id="n2v">12</span></div>
+    <div class="chart-wrap" id="chart2" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 모서리(급변)는 "무한히 높은 주파수"를 요구하는데 유한 합으론 못 따라잡기 때문이에요. 현실 신호에서 날카로운 변화가 왜 다루기 까다로운지(그리고 압축할 때 모서리가 왜 번지는지) 보여주는 단서죠.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Recap</span>
+    <h2>푸리에 급수</h2>
+    <div class="twocol">
+      <div class="callout q"><div class="ttl">무한 합 = 임의 주기파</div><p style="margin:0">알맞은 하모닉을 무한히 더하면 어떤 주기 신호도 사인의 합으로. 사각파=홀수 하모닉 1/k.</p></div>
+      <div class="callout v"><div class="ttl">모서리는 욕심쟁이</div><p style="margin:0">급변(모서리)엔 많은 고주파가 필요. 유한 합엔 깁스 뿔(~9%)이 남아.</p></div>
+    </div>
+    <div class="callout good" style="margin-top:14px">
+      <p style="margin:0">사인 합으로 임의의 <b>파형</b>을 그렸다면, 이번엔 회전 화살표 합으로 임의의 <b>그림</b>을 그릴 차례예요. 다음 <b>07장 에피사이클</b>은 이 트랙에서 가장 아름다운 장면 — 수십 개 회전 화살표가 이어져 손글씨를 그려냅니다.</p>
+    </div>
+    <p class="note" style="margin-top:16px">→ <a href="07-epicycles.html" style="color:var(--q);font-weight:700">CH 07 · 에피사이클</a> · <a href="index.html">목차</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · 모든 급수 합은 브라우저에서 실시간 계산 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script>
+VZ.mountTopnav('#topnav', 'CH 06 · 푸리에 급수');
+VZ.setupStepper();
+const FT = VZ.FT, TAU = FT.TAU;
+const square = x => Math.sign(Math.sin(TAU*x)) * 0.95;
+function partial(n){ const terms=[]; for(let i=0;i<n;i++){ const k=2*i+1; terms.push({amp:(4/Math.PI)/k, freq:k, phase:0}); } return FT.additive(terms); }
+
+// Step 0
+(function(){ const bd=FT.board({W:560,H:200,xmin:0,xmax:2,ymin:-1.3,ymax:1.3});
+  document.getElementById('chart0').innerHTML=`<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block"><line x1="${bd.X(0)}" y1="${bd.Y(0)}" x2="${bd.X(2)}" y2="${bd.Y(0)}" stroke="rgba(255,255,255,.15)"/>${FT.waveStrip(bd, square, {color:'var(--hot)', n:600})}</svg>`;
+})();
+// Step 1
+(function(){ let n=3; const bd=FT.board({W:560,H:230,xmin:0,xmax:2,ymin:-1.4,ymax:1.4});
+  function r(){ const f=partial(n);
+    document.getElementById('chart1').innerHTML=`<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block"><line x1="${bd.X(0)}" y1="${bd.Y(0)}" x2="${bd.X(2)}" y2="${bd.Y(0)}" stroke="rgba(255,255,255,.15)"/>${FT.waveStrip(bd, square, {color:'var(--faint)', n:600})}${FT.waveStrip(bd, f, {color:'var(--hot)', n:600})}</svg>`; }
+  document.getElementById('n1').oninput=e=>{ n=+e.target.value; document.getElementById('n1v').textContent=n; r(); }; r();
+})();
+// Step 2 깁스 (모서리 확대)
+(function(){ let n=12; const bd=FT.board({W:560,H:230,xmin:0.42,xmax:0.58,ymin:0.6,ymax:1.35});
+  function r(){ const f=partial(n);
+    let s=`<line x1="${bd.X(0.42)}" y1="${bd.Y(0.95)}" x2="${bd.X(0.58)}" y2="${bd.Y(0.95)}" stroke="var(--faint)" stroke-dasharray="4 3"/>`;
+    s+=`<text x="${bd.X(0.42)+4}" y="${bd.Y(0.95)-4}" fill="var(--faint)" font-size="11" font-family="JetBrains Mono">사각파 높이 0.95</text>`;
+    s+=FT.waveStrip(bd, f, {color:'var(--hot)', n:600});
+    document.getElementById('chart2').innerHTML=`<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block">${s}</svg>`;
+  }
+  document.getElementById('n2').oninput=e=>{ n=+e.target.value; document.getElementById('n2v').textContent=n; r(); }; r();
+})();
+</script>
+</body>
+</html>

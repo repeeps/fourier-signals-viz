@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>05 거꾸로 분해 · 푸리에·신호처리, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<style>
+  .twocol{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;}
+  .hsliders{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px 16px; margin:8px 0;}
+  .hsliders .ctrl{margin:0;} .hsliders label{min-width:50px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag">PART 2 · Chapter 05</div>
+    <h1>거꾸로 분해 — 어떤 물결들의 합인가</h1>
+    <p class="intro">합성이 "주파수 배합 → 파형"이라면, <b>분해</b>는 그 <b>반대</b>예요: 들려온 복잡한 파형을 보고 <b>"어떤 사인파들이 얼마나 들어있나"</b>를 알아내는 것. 이게 푸리에의 진짜 핵심이에요. 그리고 놀랍게도 그 답은 <b>딱 하나로 정해져요</b>(추측이 아니에요). 직접 분해 퍼즐을 풀어봐요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 거꾸로 묻기</button>
+    <button data-s="1">01 · 분해 퍼즐</button>
+    <button data-s="2">02 · 답은 하나</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — Asking Backwards</span>
+    <h2>이 파형은 어떤 사인의 합일까?</h2>
+    <p class="lead">아래 <span style="color:var(--hot)">주황</span> 파형은 몇 개의 사인파를 더해 만든 거예요. 보기만 해선 어떤 재료인지 알기 어렵죠. 합성은 쉬웠지만(섞기), <b>거꾸로 재료를 알아내기(분해)</b>는 푸리에가 풀어준 어려운 문제예요.</p>
+    <div class="chart-wrap" id="chart0" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 요리에 비유하면: 완성된 수프(파형)를 맛보고 <b>"소금 얼마, 후추 얼마"</b>를 정확히 알아내는 것. 다음 단계에서 슬라이더로 직접 재료를 맞춰 이 파형을 재현해 보세요.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Decomposition Puzzle</span>
+    <h2>슬라이더로 똑같이 맞춰보기</h2>
+    <p class="lead"><span style="color:var(--faint)">회색</span>이 정답 파형이에요. 1~5배 하모닉 슬라이더를 조절해 <span style="color:var(--hot)">주황</span> 파형을 회색에 <b>똑같이 포개</b>보세요. 맞춤도가 올라가면 성공! (정답을 모르고 맞춰보는 게 핵심이에요.)</p>
+    <div class="hsliders" id="hsliders"></div>
+    <div id="fit" class="callout q"></div>
+    <div class="row" style="gap:8px;margin:6px 0"><button class="btn" id="reveal">정답 보기</button><button class="btn" id="reset" style="border-color:var(--line);background:var(--panel-2);color:var(--muted)">↺ 리셋</button></div>
+    <div class="chart-wrap" id="chart1" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 손으로 맞추긴 번거롭죠? 다행히 푸리에엔 <b>정확히 계산하는 공식</b>(10장 DFT)이 있어요. 컴퓨터는 이 분해를 눈 깜짝할 새 해냅니다. 여기선 "분해가 무엇인지" 감만 잡으면 돼요.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — The Answer is Unique</span>
+    <h2>분해는 추측이 아니라 유일한 답</h2>
+    <p class="lead">정답 배합이에요. 어떤 파형이든 "각 주파수가 얼마나"는 <b>딱 하나로 정해져요</b> — 여러 답이 있는 게 아니에요. 그래서 푸리에 분해는 신뢰할 수 있는 <b>측정</b>이지 짐작이 아니에요.</p>
+    <div class="chart-wrap" id="spec2" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 이 막대그래프(주파수별 양)가 바로 다음 PART의 주인공 <b>스펙트럼</b>이에요. 파형(시간)과 이 막대(주파수)는 <b>같은 정보의 두 얼굴</b>이죠(8장). 어느 쪽으로도 서로를 완벽히 복원할 수 있어요.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Recap</span>
+    <h2>분해</h2>
+    <div class="twocol">
+      <div class="callout q"><div class="ttl">합성의 반대</div><p style="margin:0">파형 → "어떤 주파수가 얼마나". 들려온 신호의 재료를 알아내기.</p></div>
+      <div class="callout v"><div class="ttl">유일하게 결정</div><p style="margin:0">분해 결과는 딱 하나. 추측이 아니라 측정. 그 결과 = 스펙트럼.</p></div>
+    </div>
+    <div class="callout good" style="margin-top:14px">
+      <p style="margin:0">분해가 푸리에의 심장이에요. 다음 <b>06장</b>에선 분해/합성의 가장 아름다운 예 — 사인파를 무한히 쌓아 <b>사각파</b>를 만드는 푸리에 급수를, <b>07장</b>에선 회전 화살표들의 분해로 <b>그림을 그리는 에피사이클</b>을 봅니다.</p>
+    </div>
+    <p class="note" style="margin-top:16px">→ <a href="06-fourier-series.html" style="color:var(--q);font-weight:700">CH 06 · 푸리에 급수</a> · <a href="index.html">목차</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · 모든 파형·분해는 브라우저에서 실시간 계산 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script>
+VZ.mountTopnav('#topnav', 'CH 05 · 분해');
+VZ.setupStepper();
+const FT = VZ.FT, TAU = FT.TAU;
+const TARGET = [0.8, 0.0, 0.55, 0.35, 0.0];  // 정답 배합(1~5배 진폭)
+function tFn(amps){ const t=amps.map((a,i)=>({amp:a,freq:i+1,phase:0})); return FT.additive(t); }
+function wsvg(bd, inner){ return `<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block"><line x1="${bd.X(0)}" y1="${bd.Y(0).toFixed(1)}" x2="${bd.X(1)}" y2="${bd.Y(0).toFixed(1)}" stroke="rgba(255,255,255,.15)"/>${inner}</svg>`; }
+
+// Step 0
+(function(){ const bd=FT.board({W:560,H:210,xmin:0,xmax:1,ymin:-1.9,ymax:1.9});
+  document.getElementById('chart0').innerHTML=wsvg(bd, FT.waveStrip(bd, tFn(TARGET), {color:'var(--hot)', n:500})); })();
+
+// Step 1 퍼즐
+(function(){ let amps=[0,0,0,0,0];
+  const bd=FT.board({W:560,H:230,xmin:0,xmax:1,ymin:-1.9,ymax:1.9});
+  const wrap=document.getElementById('hsliders');
+  wrap.innerHTML=amps.map((a,i)=>`<div class="ctrl"><label>${i+1}배</label><input type="range" data-k="${i}" min="0" max="100" value="0"><span class="val" id="hv${i}">0.00</span></div>`).join('');
+  const tgt=tFn(TARGET);
+  function fitPct(){ let se=0, e0=0; for(let x=0;x<1;x+=0.004){ const d=tFn(amps)(x)-tgt(x); se+=d*d; e0+=tgt(x)*tgt(x); } return Math.max(0, 100*(1-Math.sqrt(se/(e0||1)))); }
+  function r(){ const f=tFn(amps);
+    document.getElementById('chart1').innerHTML=wsvg(bd, FT.waveStrip(bd,tgt,{color:'var(--faint)',n:500})+FT.waveStrip(bd,f,{color:'var(--hot)',n:500}));
+    const p=fitPct(); document.getElementById('fit').innerHTML=`<div class="ttl" style="color:${p>97?'var(--good)':'var(--q)'}">맞춤도 ${p.toFixed(0)}%</div><p style="margin:0">${p>97?'<b style="color:var(--good)">완벽! 정답 배합을 찾았어요 🎉</b>':p>70?'거의 다 왔어요 — 미세 조정!':'회색 파형에 포개지도록 슬라이더를 맞춰보세요.'}</p>`;
+  }
+  wrap.addEventListener('input',e=>{ const k=+e.target.dataset.k; amps[k]=+e.target.value/100; document.getElementById('hv'+k).textContent=amps[k].toFixed(2); r(); });
+  document.getElementById('reveal').onclick=()=>{ amps=TARGET.slice(); wrap.querySelectorAll('input').forEach((inp,i)=>{inp.value=amps[i]*100; document.getElementById('hv'+i).textContent=amps[i].toFixed(2);}); r(); };
+  document.getElementById('reset').onclick=()=>{ amps=[0,0,0,0,0]; wrap.querySelectorAll('input').forEach((inp,i)=>{inp.value=0; document.getElementById('hv'+i).textContent='0.00';}); r(); };
+  r();
+})();
+
+// Step 2 스펙트럼(정답)
+(function(){ const bins=TARGET.map((a,i)=>({freq:i+1, amp:a}));
+  document.getElementById('spec2').innerHTML=FT.spectrum(bins, {W:540,H:220, colorFn:()=> 'var(--pink)'}); })();
+</script>
+</body>
+</html>
