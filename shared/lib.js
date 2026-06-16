@@ -173,6 +173,15 @@
                      sample:'var(--hot)', alias:'var(--k)', pos:'var(--good)', neg:'var(--k)', dim:'var(--slate)' };
   const col = s => FT_STATE[s] || (s && s.indexOf && s.indexOf('var(') === 0 ? s : 'var(--slate)');
 
+  // 스칼라 t∈[0,1] → 색 (낮음 남보라 → 청록 → 초록 → 노랑) — 스펙트로그램 히트맵용
+  function heatColor(t) {
+    t = Math.max(0, Math.min(1, t));
+    const stops = [[30, 27, 75], [37, 99, 142], [52, 211, 153], [251, 191, 36]];
+    const seg = t * (stops.length - 1), i = Math.min(stops.length - 2, Math.floor(seg)), f = seg - i;
+    const c = stops[i].map((v, k) => Math.round(v + (stops[i + 1][k] - v) * f));
+    return `rgb(${c[0]},${c[1]},${c[2]})`;
+  }
+
   // ---- 등속 시간 클럭 (이 트랙의 심장) ----
   function clock(cb, opts = {}) {
     let t = 0, speed = opts.speed || 1, running = false, raf = 0, last = 0;
@@ -348,5 +357,5 @@
   }
 
   VZ.FT = { clock, board, cboard, cgrid, phasor, epicycles, trail, waveStrip, spectrum, additive,
-            integrate, dft, dftComplex, fft, toEpicycleTerms, projectionArea, audio, legend, col, TAU };
+            integrate, dft, dftComplex, fft, toEpicycleTerms, projectionArea, audio, legend, col, heatColor, TAU };
 })(window);
