@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>00 푸리에·신호처리, 눈으로 보기 — 입문</title>
+<link rel="stylesheet" href="shared/theme.css">
+<style>
+  .twocol{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;}
+  .colbox{background:var(--panel-2); border:1px solid var(--line); border-radius:14px; padding:14px;}
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px;}
+  .uc{background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:12px; cursor:pointer; transition:.15s;}
+  .uc:hover{border-color:var(--q);}
+  .uc .reveal{display:none; margin-top:6px; font-size:12.5px; color:var(--muted); line-height:1.6;}
+  .uc.open .reveal{display:block;}
+  .cmap{display:grid; gap:8px;}
+  .cmrow{display:grid; grid-template-columns:84px 1fr; gap:12px; align-items:center; padding:8px 12px; border:1px solid var(--line); border-radius:10px; background:var(--panel-2);}
+  .cmrow .pt{font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag">Intro · 왜 보는가</div>
+    <h1>세상은 떨림이다 — 모든 신호는 물결의 합</h1>
+    <p class="intro">소리·빛·전파·심장박동… 우리가 다루는 거의 모든 신호는 <b>단순한 물결(사인파)들의 합</b>이에요. <b>푸리에</b>는 이 합을 거꾸로 <b>풀어내는 안경</b>이죠. 이 코스는 수식·복소수 없이, <b>회전하는 화살표와 물결</b>을 직접 돌리고 <b>소리로 들으며</b> 익혀요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 어디에나</button>
+    <button data-s="1">01 · 회전 = 사인파</button>
+    <button data-s="2">02 · 더하면 = 소리</button>
+    <button data-s="3">03 · 코스 지도</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — Everywhere</span>
+    <h2>푸리에는 어디에 쓰이나</h2>
+    <p class="lead">"복잡한 신호를 단순한 주파수들로 풀기"는 도처에 있어요. 카드를 눌러 보세요.</p>
+    <div class="cards" id="useCards"></div>
+    <p class="note" style="margin-top:14px">→ 공통점: <b>복잡한 신호 = 여러 주파수의 합</b>이고, 그걸 <b>주파수별로 분해</b>하면 압축·필터·인식이 가능해져요. 이 코스의 척추는 <b>회전=사인파 → 분해 → 에피사이클 → DFT → 선대 종합</b>이에요.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Rotation is a Sine</span>
+    <h2>돌아가는 화살표의 그림자 = 사인파</h2>
+    <p class="lead">왼쪽에서 화살표가 <b>일정하게 회전</b>해요. 그 끝의 <b>높이(그림자)</b>를 오른쪽으로 흘려보내면 — 정확히 <b>사인파</b>가 그려져요. 회전이 곧 물결이에요. <b>속도(주파수)</b>를 바꿔보세요.</p>
+    <div class="row" style="gap:8px;margin:6px 0;align-items:center;flex-wrap:wrap">
+      <button class="btn" id="play1">⏸ 정지</button>
+      <div class="ctrl" style="margin:0"><label>회전 속도(주파수)</label><input type="range" id="freq1" min="1" max="4" value="1"><span class="val" id="freq1v">1</span></div>
+    </div>
+    <div class="chart-wrap" id="chart1" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 화살표 <b>길이=진폭</b>, <b>회전 속도=주파수</b>, <b>출발 각도=위상</b> — 사인파의 세 요소가 회전의 세 성질과 1:1로 맞아요(1~3장). 이 "회전하는 화살표"가 앞으로 모든 챕터의 주인공이에요.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Add Them, Hear Them</span>
+    <h2>단순한 물결을 더하면 복잡한 소리</h2>
+    <p class="lead">사인파(하모닉)를 하나씩 더해 가요. 둘셋만 더해도 파형이 복잡해지고, 더할수록 <b>사각파</b>에 가까워지죠. <b>🔊 들어보기</b>로 음색이 변하는 것도 직접 들어보세요.</p>
+    <div class="row" style="gap:8px;margin:6px 0;align-items:center;flex-wrap:wrap">
+      <div class="ctrl" style="margin:0"><label>더한 하모닉 수</label><input type="range" id="nh" min="1" max="8" value="1"><span class="val" id="nhv">1</span></div>
+      <button class="btn play" id="hear">🔊 들어보기</button>
+    </div>
+    <div class="chart-wrap" id="chart2" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:12px">→ 단순한 것들의 합이 복잡한 것 — 이게 <b>가산 합성</b>이에요. 거꾸로 "복잡한 소리를 어떤 사인파들로 더했나" 알아내는 게 <b>푸리에 분해</b>(5장). 신디사이저·MP3가 다 이 원리예요.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Course Map</span>
+    <h2>이 코스에서 배울 것</h2>
+    <p class="lead">물결의 언어(회전·사인파)로 시작해, 쌓고 푸는 법(합성·분해·에피사이클), 두 세계(시간↔주파수·DFT·FFT), 현실의 신호(샘플링·필터), 그리고 선형대수의 눈(사영·직교·기저변환)까지 봐요.</p>
+    <div class="cmap" id="courseMap"></div>
+    <p class="note" style="margin-top:16px">→ 첫 챕터로 가볼까요? <a href="01-sine.html" style="color:var(--q);font-weight:700">CH 01 · 사인파 3요소</a>부터 시작하세요. (나머지는 순차 공개)</p>
+  </section>
+
+  <p class="foot">// 수식 없는 직관 입문 · 모든 회전·파형·소리는 브라우저에서 실시간 계산 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script>
+VZ.mountTopnav('#topnav', '00 · Intro');
+VZ.setupStepper();
+const FT = VZ.FT, TAU = FT.TAU;
+
+// ---------- STEP 0 : 어디에나 ----------
+(function(){
+  const U = [
+    ['🎵','음악·오디오','이퀄라이저로 저음/고음 조절, MP3 압축 — 모두 주파수별로 신호를 다뤄요.'],
+    ['📡','통신·와이파이','여러 채널이 서로 다른 주파수 칸을 나눠 써요. 주파수 분리가 핵심.'],
+    ['🖼️','이미지·JPEG','그림도 2D 주파수로 분해해, 눈에 안 띄는 성분을 버려 압축해요.'],
+    ['🩺','의료·MRI','MRI는 측정한 주파수 신호를 푸리에로 풀어 영상으로 복원해요.'],
+    ['🗣️','음성인식','목소리를 주파수 성분(스펙트로그램)으로 바꿔 AI가 알아들어요.'],
+    ['🌊','진동·지진','기계 진동·지진파의 주파수를 분석해 고장·진앙을 찾아요.'],
+  ];
+  document.getElementById('useCards').innerHTML = U.map(u=>
+    `<div class="uc"><div style="font-size:22px">${u[0]}</div><div style="font-weight:700;margin-top:4px;font-size:14px">${u[1]}</div><div class="reveal">${u[2]}</div><div class="note" style="font-size:11px;color:var(--faint);margin-top:6px">클릭 ▾</div></div>`).join('');
+  document.getElementById('useCards').addEventListener('click',e=>{ const c=e.target.closest('.uc'); if(c)c.classList.toggle('open'); });
+})();
+
+// ---------- STEP 1 : 회전 = 사인파 (clock 동기) ----------
+(function(){
+  let freq = 1;
+  const cb = FT.cboard({W:240,H:240,pad:16,range:1.3});           // unit=80, oy=120
+  const bd = FT.board({W:380,H:240,xmin:0,xmax:2,ymin:-1.3,ymax:1.3,padL:10,padR:14,padT:16,padB:16}); // Y(0)=120, unit=80
+  function render(t){
+    const sample = x => Math.sin(TAU*freq*(t - x));               // x=0(왼쪽,지금)에서 화살표 높이와 일치
+    const ph = FT.phasor(cb, {cx:0,cy:0,amp:1,freq,phase:0,t,color:'var(--q)'});
+    let s = `<g>${FT.cgrid(cb,{rings:[1]})}${ph.svg}</g>`;
+    // 파형 영역 (오른쪽으로 240 평행이동)
+    let wave = `<line x1="${bd.X(0).toFixed(1)}" y1="${bd.Y(0).toFixed(1)}" x2="${bd.X(2).toFixed(1)}" y2="${bd.Y(0).toFixed(1)}" stroke="rgba(255,255,255,.15)"/>`;
+    wave += FT.waveStrip(bd, sample, {color:'var(--hot)', n:200});
+    s += `<g transform="translate(240,0)">${wave}</g>`;
+    // 그림자 연결선 (화살표 끝 → 파형 시작점, 같은 높이)
+    const y0 = cb.Y(ph.tip.im);
+    s += `<line x1="${cb.X(ph.tip.re).toFixed(1)}" y1="${y0.toFixed(1)}" x2="${(240+bd.X(0)).toFixed(1)}" y2="${y0.toFixed(1)}" stroke="var(--hot)" stroke-width="1" stroke-dasharray="3 3" opacity="0.7"/>`;
+    s += `<circle cx="${(240+bd.X(0)).toFixed(1)}" cy="${y0.toFixed(1)}" r="4" fill="var(--hot)"/>`;
+    document.getElementById('chart1').innerHTML = `<svg width="620" height="240" viewBox="0 0 620 240" style="max-width:100%;display:block">${s}</svg>`;
+  }
+  const ck = FT.clock(({t})=>render(t), {speed:0.5});
+  const btn = document.getElementById('play1');
+  btn.onclick = ()=>{ ck.toggle(); btn.textContent = ck.running ? '⏸ 정지' : '▶ 재생'; };
+  document.getElementById('freq1').oninput = e=>{ freq=+e.target.value; document.getElementById('freq1v').textContent=freq; };
+})();
+
+// ---------- STEP 2 : 더하면 = 소리 ----------
+(function(){
+  let nh = 1;
+  const bd = FT.board({W:560,H:240,xmin:0,xmax:1,ymin:-1.35,ymax:1.35});
+  function terms(){ const arr=[]; for(let i=0;i<nh;i++){ const k=2*i+1; arr.push({amp:1/k, freq:k, phase:0}); } return arr; } // 홀수 하모닉 → 사각파
+  function render(){
+    const t = terms(); const f = FT.additive(t);
+    // 정규화(시각): 최대값으로 나눠 -1..1
+    let mx=0; for(let x=0;x<=1;x+=0.002) mx=Math.max(mx,Math.abs(f(x))); mx=mx||1;
+    const norm = x => f(x)/mx;
+    let s = `<line x1="${bd.X(0).toFixed(1)}" y1="${bd.Y(0).toFixed(1)}" x2="${bd.X(1).toFixed(1)}" y2="${bd.Y(0).toFixed(1)}" stroke="rgba(255,255,255,.15)"/>`;
+    s += FT.waveStrip(bd, norm, {color:'var(--hot)', n:400});
+    document.getElementById('chart2').innerHTML = `<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block">${s}</svg>`;
+  }
+  document.getElementById('nh').oninput = e=>{ nh=+e.target.value; document.getElementById('nhv').textContent=nh; render(); };
+  document.getElementById('hear').onclick = ()=>{ FT.audio.play(terms(), {base:196, dur:1.4, vol:0.25}); };
+  render();
+})();
+
+// ---------- STEP 3 : 코스 지도 ----------
+(function(){
+  const MAP = [
+    ['PART 1','물결의 언어','01 사인파 3요소 · 02 위상 · 03 회전=사인파(위상자)','var(--q)'],
+    ['PART 2','쌓기와 풀기','04 합성 · 05 분해 · 06 푸리에 급수 · 07 에피사이클 ⭐','var(--hot)'],
+    ['PART 3','두 세계','08 시간↔주파수 · 09 위상의 중요성 · 10 DFT · 11 FFT','var(--v)'],
+    ['PART 4','현실의 신호','12 샘플링·에일리어싱 · 13 필터링 · 14 스펙트로그램','var(--good)'],
+    ['PART 5','선대의 눈+응용','15 사영=계수 · 16 직교 기저 · 17 기저 변환·압축','var(--pink)'],
+  ];
+  document.getElementById('courseMap').innerHTML = MAP.map(r=>
+    `<div class="cmrow"><div class="pt" style="color:${r[3]}">${r[0]}<br><span style="color:var(--muted);font-weight:400">${r[1]}</span></div><div style="font-size:13px">${r[2]}</div></div>`).join('');
+})();
+</script>
+</body>
+</html>

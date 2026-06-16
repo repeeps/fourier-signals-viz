@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>푸리에·신호처리, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<style>
+  .hero{text-align:center; padding:30px 0 10px;}
+  .hero .tag{font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.25em; text-transform:uppercase; color:var(--q);}
+  .hero h1{font-size:clamp(30px,6vw,52px); font-weight:800; letter-spacing:-.03em; margin:14px 0 12px; line-height:1.06;}
+  .hero p{color:var(--muted); max-width:660px; margin:0 auto; font-size:16px;}
+  .seclabel{font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); margin:28px 0 12px;}
+  .cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px;}
+  .ccard{position:relative; display:block; text-decoration:none; background:var(--panel-2); border:1px solid var(--line); border-left:4px solid var(--accent,var(--q)); border-radius:14px; padding:16px 18px; transition:.18s;}
+  .ccard:hover{transform:translateY(-4px); border-color:var(--accent,var(--q)); box-shadow:0 14px 36px rgba(0,0,0,.35);}
+  .ccard .num{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--accent,var(--q)); font-weight:700;}
+  .ccard h3{margin:6px 0 4px; font-size:16px;}
+  .ccard p{margin:0; font-size:12.5px; color:var(--muted); line-height:1.5;}
+  .ccard .chips{margin-top:10px; display:flex; gap:6px; flex-wrap:wrap;}
+  .chip{font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--faint); border:1px solid var(--line); border-radius:6px; padding:2px 6px;}
+  .ccard.soon{opacity:.5; cursor:not-allowed;}
+  .ccard.soon:hover{transform:none; border-color:var(--line); box-shadow:none;}
+  .ccard.soon::after{content:'🚧 준비 중'; position:absolute; top:12px; right:14px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--faint);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="tag">Fourier · Signal Processing, 눈으로 보기</div>
+    <h1>푸리에·신호처리, 눈으로 보기</h1>
+    <p>세상의 모든 신호는 단순한 <b>물결(사인파)의 합</b> — 회전·파형·스펙트럼을 직접 돌리고 <b>소리로 들으며</b> 익히는 0번 입문 + 17챕터.</p>
+  </div>
+
+  <a href="00-intro.html" style="display:block;text-decoration:none;margin:8px 0 4px;padding:18px 22px;border-radius:16px;background:linear-gradient(100deg,rgba(251,191,36,.12),rgba(55,189,248,.08));border:1px solid var(--hot);transition:.2s">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--hot);font-weight:700">👋 처음이세요?</div>
+    <div style="font-size:18px;font-weight:800;color:var(--ink);margin:6px 0 4px">0번 — 세상은 떨림이다 (수식 없는 5분 입문)</div>
+    <div style="font-size:13.5px;color:var(--muted)">돌아가는 화살표의 그림자가 사인파가 되는 걸 보고, 물결을 더해 직접 소리로 들어보세요. 코스 지도도 함께. →</div>
+  </a>
+  <p class="note" style="margin:6px 2px 0;color:var(--faint);font-size:13px">📚 처음이라면 <b>0번부터 순서대로</b>. 수식·복소수·기호는 <b>몰라도 돼요</b> — 모든 걸 <b>회전하는 화살표와 물결</b>로 풀어드려요. 척추는 <b>회전=사인파(03)→분해(05)→에피사이클(07)→DFT(10)→선대 종합(17)</b>. 일부 챕터엔 <b>🔊 실제 소리</b> 버튼이 있어요.</p>
+
+  <div class="seclabel">PART 1 · 물결의 언어</div>
+  <div class="cards">
+    <a class="ccard" style="--accent:var(--q)" href="01-sine.html"><div class="num">01</div><h3>사인파 3요소</h3><p>진폭·주파수·위상 — 가장 단순한 출렁임의 세 손잡이.</p><div class="chips"><span class="chip">amplitude</span><span class="chip">frequency</span></div></a>
+    <a class="ccard" style="--accent:var(--q)" href="02-phase.html"><div class="num">02</div><h3>위상 — 타이밍</h3><p>같은 물결, 다른 출발 시각. 겹치면 보강·상쇄 간섭.</p><div class="chips"><span class="chip">phase</span><span class="chip">interference</span></div></a>
+    <a class="ccard" style="--accent:var(--q)" href="03-rotation.html"><div class="num">03</div><h3>회전 = 사인파</h3><p>원을 도는 점의 그림자가 곧 사인파. 회전하는 화살표(위상자).</p><div class="chips"><span class="chip">phasor</span></div></a>
+  </div>
+
+  <div class="seclabel">PART 2 · 쌓기와 풀기</div>
+  <div class="cards">
+    <a class="ccard" style="--accent:var(--hot)" href="04-superpose.html"><div class="num">04</div><h3>파동의 덧셈</h3><p>사인파 몇 개를 더하면 복잡한 파형 — 직접 합성하고 들어보기.</p><div class="chips"><span class="chip">synthesis</span><span class="chip">🔊</span></div></a>
+    <a class="ccard" style="--accent:var(--hot)" href="05-decompose.html"><div class="num">05</div><h3>거꾸로 분해</h3><p>복잡한 파형을 사인파들로 되돌리기 — 푸리에의 핵심 발상.</p><div class="chips"><span class="chip">decompose</span></div></a>
+    <a class="ccard" style="--accent:var(--hot)" href="06-fourier-series.html"><div class="num">06</div><h3>푸리에 급수</h3><p>하모닉을 쌓을수록 사각파·톱니파로 — 모서리의 깁스 현상.</p><div class="chips"><span class="chip">square wave</span><span class="chip">Gibbs</span></div></a>
+    <a class="ccard" style="--accent:var(--hot)" href="07-epicycles.html"><div class="num">07</div><h3>에피사이클 ⭐</h3><p>회전 화살표들을 이어 손글씨·하트를 그려내는 장면.</p><div class="chips"><span class="chip">epicycles</span></div></a>
+  </div>
+
+  <div class="seclabel">PART 3 · 두 세계: 시간 ↔ 주파수</div>
+  <div class="cards">
+    <a class="ccard" style="--accent:var(--v)" href="08-time-freq.html"><div class="num">08</div><h3>시간 ↔ 주파수</h3><p>같은 신호를 파형으로도, 주파수 막대로도 — 쌍둥이 뷰.</p><div class="chips"><span class="chip">spectrum</span></div></a>
+    <a class="ccard" style="--accent:var(--v)" href="09-phase-matters.html"><div class="num">09</div><h3>위상은 왜 중요한가</h3><p>진폭이 같아도 위상이 다르면 파형이 완전히 달라진다.</p><div class="chips"><span class="chip">phase</span></div></a>
+    <a class="ccard" style="--accent:var(--v)" href="10-dft.html"><div class="num">10</div><h3>DFT — 얼마나 들어있나</h3><p>신호를 한 주파수로 "감아" 무게중심으로 성분 검출.</p><div class="chips"><span class="chip">DFT</span><span class="chip">winding</span></div></a>
+    <a class="ccard" style="--accent:var(--v)" href="11-fft.html"><div class="num">11</div><h3>FFT — 왜 빠른가</h3><p>분할정복으로 DFT를 빠르게. 마법이 아니라 지름길.</p><div class="chips"><span class="chip">FFT</span></div></a>
+  </div>
+
+  <div class="seclabel">PART 4 · 현실의 신호</div>
+  <div class="cards">
+    <a class="ccard" style="--accent:var(--good)" href="12-sampling.html"><div class="num">12</div><h3>샘플링·에일리어싱</h3><p>띄엄띄엄 찍으면 빠른 회전이 거꾸로 보이는 착시(나이키스트).</p><div class="chips"><span class="chip">aliasing</span></div></a>
+    <a class="ccard" style="--accent:var(--good)" href="13-filtering.html"><div class="num">13</div><h3>필터링</h3><p>주파수 막대를 깎아 노이즈 제거 — 듣고 보며.</p><div class="chips"><span class="chip">filter</span><span class="chip">🔊</span></div></a>
+    <a class="ccard" style="--accent:var(--good)" href="14-spectrogram.html"><div class="num">14</div><h3>스펙트로그램</h3><p>시간 따라 변하는 주파수를 색띠로 — 휘파람·새소리.</p><div class="chips"><span class="chip">spectrogram</span></div></a>
+  </div>
+
+  <div class="seclabel">PART 5 · 선대의 눈 + 응용</div>
+  <div class="cards">
+    <a class="ccard" style="--accent:var(--pink)" href="15-projection.html"><div class="num">15</div><h3>사영 = 계수</h3><p>신호를 사인 기저에 그림자 내리기(내적) = 그 성분의 양.</p><div class="chips"><span class="chip">inner product</span></div></a>
+    <a class="ccard" style="--accent:var(--pink)" href="16-orthogonal.html"><div class="num">16</div><h3>직교 기저</h3><p>서로 다른 주파수 사인파는 곱해 더하면 0 — 간섭 없음.</p><div class="chips"><span class="chip">orthogonal</span></div></a>
+    <a class="ccard" style="--accent:var(--pink)" href="17-basis-change.html"><div class="num">17</div><h3>기저 변환 + 응용</h3><p>시간 축 → 주파수 축으로 갈아끼우기. EQ·MP3·JPEG.</p><div class="chips"><span class="chip">basis change</span><span class="chip">→압축</span></div></a>
+  </div>
+
+  <p class="foot" style="margin-top:30px">// 푸리에·신호처리 핵심을 직접 만든 비영리 인터랙티브 학습 자료 · 모든 신호·변환·소리는 브라우저에서 실시간 계산</p>
+</div>
+
+<script>
+// 공개된 페이지만 클릭 가능 — 챕터 완성 시 파일명을 READY에 추가
+(function(){
+  const READY = new Set(['00-intro.html']);
+  document.querySelectorAll('a.ccard').forEach(a=>{ if(READY.has(a.getAttribute('href'))) return; a.classList.add('soon'); a.addEventListener('click', e=>e.preventDefault()); });
+})();
+</script>
+</body>
+</html>
