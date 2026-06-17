@@ -54,7 +54,7 @@
     <div class="row" style="gap:8px;margin:6px 0"><button class="btn play" id="hear2">🔊 압축된 소리</button></div>
     <div class="panellab">원본(<span style="color:var(--faint)">회색</span>) vs 압축 복원(<span style="color:var(--hot)">주황</span>)</div><div class="chart-wrap" id="w2"></div>
     <div class="panellab">보관된 스펙트럼 (회색=버림)</div><div class="chart-wrap" id="s2"></div>
-    <p class="note" style="margin-top:12px">→ <b>MP3</b>는 사람 귀에 안 들리는 주파수를, <b>JPEG</b>는 눈에 안 띄는 (고주파) 성분을 버려요. 둘 다 "주파수 축에서 작은 성분 버리기"예요. 7장 에피사이클에서 본 "화살표 적으면 뭉툭"과 똑같은 원리죠 — 디테일=고주파.</p>
+    <p class="note" style="margin-top:12px">→ <b>MP3</b>는 사람 귀에 안 들리는 주파수를, <b>JPEG</b>는 눈에 안 띄는 (고주파) 성분을 버려요. 둘 다 "주파수 축에서 <b>지각상 덜 중요한 성분</b> 버리기"예요(꼭 진폭이 작은 것만은 아니에요 — MP3는 다른 소리에 묻혀 안 들리는 성분까지 골라 버려요). 7장 에피사이클에서 본 "화살표 적으면 뭉툭"과 똑같은 원리죠 — 디테일=고주파.</p>
   </section>
 
   <!-- STEP 3 -->
@@ -63,7 +63,7 @@
     <h2>코스 완주 🎉</h2>
     <div class="twocol">
       <div class="callout q"><div class="ttl">변환 = 기저 바꾸기</div><p style="margin:0">시간 축 ↔ 주파수 축. 표현만 바뀌고 정보 보존(되돌리면 원본).</p></div>
-      <div class="callout v"><div class="ttl">압축의 원리</div><p style="margin:0">주파수 축에선 정보가 몇 성분에 몰림 → 작은 것 버리면 거의 같은데 가벼움(MP3·JPEG).</p></div>
+      <div class="callout v"><div class="ttl">압축의 원리</div><p style="margin:0">주파수 축에선 정보가 몇 성분에 몰림 → 지각상 덜 중요한 성분을 버리면 거의 같은데 가벼움(MP3·JPEG).</p></div>
     </div>
     <div class="callout good" style="margin-top:14px">
       <p style="margin:0">🎉 전체 코스를 마쳤어요! <b>회전=사인파</b>로 시작해, 물결을 <b>쌓고 풀고</b>(합성·분해·에피사이클), <b>두 세계</b>(시간↔주파수·DFT·FFT)를 오가고, <b>현실 신호</b>(샘플링·필터·스펙트로그램)를 다루고, 마침내 <b>선형대수의 눈</b>(사영·직교·기저변환)으로 푸리에의 정체를 봤어요. 음악·통신·이미지·의료가 모두 이 한 아이디어 — "복잡한 것은 단순한 물결의 합" — 위에 서 있답니다.</p>
