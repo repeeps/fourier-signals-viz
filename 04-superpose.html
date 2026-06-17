@@ -119,10 +119,10 @@ function drawNorm(elId, terms){ const bd=FT.board({W:560,H:230,xmin:0,xmax:1,ymi
 
 // Step 2 프리셋
 (function(){ let preset='square', nh=6;
-  function terms(){ const arr=[]; for(let k=1;k<=nh;k++){ let a=0;
+  function terms(){ const arr=[]; for(let k=1;k<=nh;k++){ let a=0, ph=0;
     if(preset==='square'){ if(k%2===1) a=1/k; }
     else if(preset==='saw'){ a=1/k; }
-    else if(preset==='tri'){ if(k%2===1) a=1/(k*k); } if(a>0) arr.push({amp:a,freq:k,phase:0}); } return arr; }
+    else if(preset==='tri'){ if(k%2===1){ a=1/(k*k); ph=(((k-1)/2)%2===0)?0:Math.PI; } } if(a>0) arr.push({amp:a,freq:k,phase:ph}); } return arr; }
   function r(){ drawNorm('chart2', terms()); }
   document.getElementById('preset').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b)return; preset=b.dataset.p;
     document.querySelectorAll('#preset .btn').forEach(x=>x.classList.toggle('on',x===b)); r(); });

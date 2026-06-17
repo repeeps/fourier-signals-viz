@@ -76,7 +76,7 @@
 VZ.mountTopnav('#topnav', 'CH 06 · 푸리에 급수');
 VZ.setupStepper();
 const FT = VZ.FT, TAU = FT.TAU;
-const square = x => Math.sign(Math.sin(TAU*x)) * 0.95;
+const square = x => Math.sign(Math.sin(TAU*x));   // 단위 사각파 ±1 (부분합이 ±1로 수렴 → 깁스 ~9% 기준)
 function partial(n){ const terms=[]; for(let i=0;i<n;i++){ const k=2*i+1; terms.push({amp:(4/Math.PI)/k, freq:k, phase:0}); } return FT.additive(terms); }
 
 // Step 0
@@ -92,8 +92,8 @@ function partial(n){ const terms=[]; for(let i=0;i<n;i++){ const k=2*i+1; terms.
 // Step 2 깁스 (모서리 확대)
 (function(){ let n=12; const bd=FT.board({W:560,H:230,xmin:0.42,xmax:0.58,ymin:0.6,ymax:1.35});
   function r(){ const f=partial(n);
-    let s=`<line x1="${bd.X(0.42)}" y1="${bd.Y(0.95)}" x2="${bd.X(0.58)}" y2="${bd.Y(0.95)}" stroke="var(--faint)" stroke-dasharray="4 3"/>`;
-    s+=`<text x="${bd.X(0.42)+4}" y="${bd.Y(0.95)-4}" fill="var(--faint)" font-size="11" font-family="JetBrains Mono">사각파 높이 0.95</text>`;
+    let s=`<line x1="${bd.X(0.42)}" y1="${bd.Y(1.0)}" x2="${bd.X(0.58)}" y2="${bd.Y(1.0)}" stroke="var(--faint)" stroke-dasharray="4 3"/>`;
+    s+=`<text x="${bd.X(0.42)+4}" y="${bd.Y(1.0)-4}" fill="var(--faint)" font-size="11" font-family="JetBrains Mono">사각파 높이 1.0</text>`;
     s+=FT.waveStrip(bd, f, {color:'var(--hot)', n:600});
     document.getElementById('chart2').innerHTML=`<svg width="${bd.W}" height="${bd.H}" viewBox="0 0 ${bd.W} ${bd.H}" style="max-width:100%;display:block">${s}</svg>`;
   }
